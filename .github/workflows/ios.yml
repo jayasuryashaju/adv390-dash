@@ -20,7 +20,8 @@ jobs:
       - run: npx cap sync ios
       - name: Build unsigned archive
         run: |
-          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
+          set -o pipefail
+          xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release \
             -sdk iphoneos -archivePath build/App.xcarchive archive \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" | tail -40
       - name: Package IPA
