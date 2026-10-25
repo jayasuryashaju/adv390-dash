@@ -1,0 +1,32 @@
+name: iOS unsigned IPA
+on:
+  workflow_dispatch:
+  push:
+    paths: ['web/**', 'ios-app/**', '.github/workflows/ios.yml']
+
+jobs:
+  ipa:
+    runs-on: macos-15
+    defaults: { run: { working-directory: ios-app } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm install
+      - run: npm run build:web
+      - run: npx cap add ios
+      - run: sh scripts/patch-ios.sh
+      - run: npx capacitor-assets generate --ios
+      - run: npx cap sync ios
+      - name: Build unsigned archive
+        run: |
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
+            -sdk iphoneos -archivePath build/App.xcarchive archive \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" | tail -40
+      - name: Package IPA
+        run: |
+          mkdir -p build/Payload
+          cp -R build/App.xcarchive/Products/Applications/App.app build/Payload/
+          (cd build && zip -qry ADV390Dash.ipa Payload)
+      - uses: actions/upload-artifact@v4
+        with: { name: ADV390Dash-ipa, path: ios-app/build/ADV390Dash.ipa }

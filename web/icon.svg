@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="12" fill="#dde3df"/>
+  <g transform="skewX(-12)">
+    <rect x="14" y="12" width="5" height="10" fill="#121716"/>
+    <rect x="22" y="12" width="5" height="10" fill="#121716"/>
+    <rect x="30" y="12" width="5" height="10" fill="#121716"/>
+    <rect x="38" y="12" width="5" height="10" fill="#121716"/>
+    <rect x="46" y="12" width="5" height="10" fill="#e8600c"/>
+  </g>
+  <text x="32" y="56" text-anchor="middle" font-family="Barlow Condensed, Bahnschrift, Arial Narrow, sans-serif" font-weight="700" font-size="34" fill="#121716">4</text>
+</svg>

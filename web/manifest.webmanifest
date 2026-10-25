@@ -1,0 +1,14 @@
+{
+  "name": "ADV390 Dash",
+  "short_name": "ADV390",
+  "description": "Bluetooth dashboard and CAN decoder for the KTM 390 Adventure reader.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#dde3df",
+  "theme_color": "#dde3df",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

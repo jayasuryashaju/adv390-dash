@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <title>ADV390 Dash</title>
+  <meta name="description" content="Live instrument display for a KTM 390 Adventure, read from the CAN bus over Bluetooth.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@300;400;500;600;700;800&family=Saira:ital,wdth,wght@0,100,400;0,100,500;0,100,600;1,75,800&family=JetBrains+Mono:wght@500&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to the display</a>
+  <svg class="sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <!-- Interface icons: Phosphor Icons, bold weight (MIT licence, phosphoricons.com). -->
+    <symbol id="i-speedometer" viewBox="0 0 256 256" fill="currentColor"><path d="M119.51,143.51l88-88a12,12,0,1,1,17,17l-88,88a12,12,0,1,1-17-17Zm14.23-43.2a12,12,0,1,0,2.62-23.85A75.15,75.15,0,0,0,128,76a76.08,76.08,0,0,0-76,76,12,12,0,0,0,24,0,52.06,52.06,0,0,1,52-52A54.75,54.75,0,0,1,133.74,100.31Zm101.54,7.5A12,12,0,0,0,213.09,117a92.47,92.47,0,0,1,2.58,63H40.34A92.23,92.23,0,0,1,128,60h.84a91.43,91.43,0,0,1,34.2,6.91,12,12,0,0,0,9.14-22.19A116.07,116.07,0,0,0,18.57,190.58,20.09,20.09,0,0,0,37.46,204H218.53a20.06,20.06,0,0,0,18.88-13.38,116.39,116.39,0,0,0-2.13-82.81Z"/></symbol>
+    <symbol id="i-broadcast" viewBox="0 0 256 256" fill="currentColor"><path d="M128,84a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,84Zm0,64a20,20,0,1,1,20-20A20,20,0,0,1,128,148Zm77.39,12.7A83.94,83.94,0,0,1,190.61,184a12,12,0,0,1-17.89-16,59.92,59.92,0,0,0,0-80,12,12,0,0,1,17.89-16,84.07,84.07,0,0,1,14.78,88.7ZM83.28,168a12,12,0,0,1-17.89,16,83.94,83.94,0,0,1,0-112A12,12,0,0,1,83.28,88a59.92,59.92,0,0,0,0,80ZM252,128a123.63,123.63,0,0,1-35.43,86.78A12,12,0,1,1,199.43,198a99.88,99.88,0,0,0,0-140,12,12,0,0,1,17.14-16.8A123.63,123.63,0,0,1,252,128ZM56.57,198a12,12,0,0,1-17.14,16.8,123.89,123.89,0,0,1,0-173.56A12,12,0,0,1,56.57,58a99.88,99.88,0,0,0,0,140Z"/></symbol>
+    <symbol id="i-magnifying-glass" viewBox="0 0 256 256" fill="currentColor"><path d="M232.49,215.51,185,168a92.12,92.12,0,1,0-17,17l47.53,47.54a12,12,0,0,0,17-17ZM44,112a68,68,0,1,1,68,68A68.07,68.07,0,0,1,44,112Z"/></symbol>
+    <symbol id="i-sliders-horizontal" viewBox="0 0 256 256" fill="currentColor"><path d="M40,92H70.06a36,36,0,0,0,67.88,0H216a12,12,0,0,0,0-24H137.94a36,36,0,0,0-67.88,0H40a12,12,0,0,0,0,24Zm64-24A12,12,0,1,1,92,80,12,12,0,0,1,104,68Zm112,96H201.94a36,36,0,0,0-67.88,0H40a12,12,0,0,0,0,24h94.06a36,36,0,0,0,67.88,0H216a12,12,0,0,0,0-24Zm-48,24a12,12,0,1,1,12-12A12,12,0,0,1,168,188Z"/></symbol>
+    <symbol id="i-bluetooth" viewBox="0 0 256 256" fill="currentColor"><path d="M199.2,166.4,148,128l51.2-38.4a12,12,0,0,0,0-19.2l-64-48A12,12,0,0,0,116,32v72L71.2,70.4A12,12,0,0,0,56.8,89.6L108,128,56.8,166.4a12,12,0,1,0,14.4,19.2L116,152v72a12,12,0,0,0,19.2,9.6l64-48a12,12,0,0,0,0-19.2ZM140,56l32,24-32,24Zm0,144V152l32,24Z"/></symbol>
+    <symbol id="i-bluetooth-connected" viewBox="0 0 256 256" fill="currentColor"><path d="M199.2,166.4,148,128l51.2-38.4a12,12,0,0,0,0-19.2l-64-48A12,12,0,0,0,116,32v72L71.2,70.4A12,12,0,0,0,56.8,89.6L108,128,56.8,166.4a12,12,0,1,0,14.4,19.2L116,152v72a12,12,0,0,0,19.2,9.6l64-48a12,12,0,0,0,0-19.2ZM140,56l32,24-32,24Zm0,144V152l32,24ZM56,144a16,16,0,1,1,16-16A16,16,0,0,1,56,144Zm168-16a16,16,0,1,1-16-16A16,16,0,0,1,224,128Z"/></symbol>
+    <symbol id="i-bluetooth-slash" viewBox="0 0 256 256" fill="currentColor"><path d="M224.88,207.93l-160-176A12,12,0,0,0,47.12,48.07L115,122.75,56.8,166.4a12,12,0,1,0,14.4,19.2L116,152v72a12,12,0,0,0,19.2,9.6l47.91-35.94,24,26.41a12,12,0,0,0,17.76-16.14ZM140,200V152l5,3.77,21.87,24.06ZM116,59.74V32a12,12,0,0,1,19.2-9.6l64,48a12,12,0,0,1,0,19.2l-27.1,20.33a12,12,0,0,1-14.4-19.2L172,80,140,56v3.74a12,12,0,0,1-24,0Z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 256 256" fill="currentColor"><path d="M116,36V20a12,12,0,0,1,24,0V36a12,12,0,0,1-24,0Zm80,92a68,68,0,1,1-68-68A68.07,68.07,0,0,1,196,128Zm-24,0a44,44,0,1,0-44,44A44.05,44.05,0,0,0,172,128ZM51.51,68.49a12,12,0,1,0,17-17l-12-12a12,12,0,0,0-17,17Zm0,119-12,12a12,12,0,0,0,17,17l12-12a12,12,0,1,0-17-17ZM196,72a12,12,0,0,0,8.49-3.51l12-12a12,12,0,0,0-17-17l-12,12A12,12,0,0,0,196,72Zm8.49,115.51a12,12,0,0,0-17,17l12,12a12,12,0,0,0,17-17ZM48,128a12,12,0,0,0-12-12H20a12,12,0,0,0,0,24H36A12,12,0,0,0,48,128Zm80,80a12,12,0,0,0-12,12v16a12,12,0,0,0,24,0V220A12,12,0,0,0,128,208Zm108-92H220a12,12,0,0,0,0,24h16a12,12,0,0,0,0-24Z"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 256 256" fill="currentColor"><path d="M236.37,139.4a12,12,0,0,0-12-3A84.07,84.07,0,0,1,119.6,31.59a12,12,0,0,0-15-15A108.86,108.86,0,0,0,49.69,55.07,108,108,0,0,0,136,228a107.09,107.09,0,0,0,64.93-21.69,108.86,108.86,0,0,0,38.44-54.94A12,12,0,0,0,236.37,139.4Zm-49.88,47.74A84,84,0,0,1,68.86,69.51,84.93,84.93,0,0,1,92.27,48.29Q92,52.13,92,56A108.12,108.12,0,0,0,200,164q3.87,0,7.71-.27A84.79,84.79,0,0,1,186.49,187.14Z"/></symbol>
+    <symbol id="i-gas-pump" viewBox="0 0 256 256" fill="currentColor"><path d="M247.8,66.83,228.49,47.51a12,12,0,0,0-17,17L230.83,83.8A4,4,0,0,1,232,86.63V166a6,6,0,0,1-12,0V128a28,28,0,0,0-28-28H180V56a28,28,0,0,0-28-28H72A28,28,0,0,0,44,56V204H32a12,12,0,0,0,0,24H192a12,12,0,0,0,0-24H180V124h12a4,4,0,0,1,4,4v38a30,30,0,0,0,60,0V86.63A27.81,27.81,0,0,0,247.8,66.83ZM68,204V56a4,4,0,0,1,4-4h80a4,4,0,0,1,4,4V204Zm72-92a12,12,0,0,1-12,12H96a12,12,0,0,1,0-24h32A12,12,0,0,1,140,112Z"/></symbol>
+    <symbol id="i-drop" viewBox="0 0 256 256" fill="currentColor"><path d="M134.88,6.17a12,12,0,0,0-13.76,0,259,259,0,0,0-42.18,39C50.85,77.43,36,111.62,36,144a92,92,0,0,0,184,0C220,66.64,138.36,8.6,134.88,6.17ZM128,212a68.07,68.07,0,0,1-68-68c0-33.31,20-63.37,36.7-82.71A249.35,249.35,0,0,1,128,31.11a249.35,249.35,0,0,1,31.3,30.18C176,80.63,196,110.69,196,144A68.07,68.07,0,0,1,128,212Zm49.62-52.4a52,52,0,0,1-34,34,12.2,12.2,0,0,1-3.6.55,12,12,0,0,1-3.6-23.45,28,28,0,0,0,18.32-18.32,12,12,0,0,1,22.9,7.2Z"/></symbol>
+    <symbol id="i-path" viewBox="0 0 256 256" fill="currentColor"><path d="M200,164a36.07,36.07,0,0,0-33.94,24H72a28,28,0,0,1,0-56h96a44,44,0,0,0,0-88H72a12,12,0,0,0,0,24h96a20,20,0,0,1,0,40H72a52,52,0,0,0,0,104h94.06A36,36,0,1,0,200,164Zm0,48a12,12,0,1,1,12-12A12,12,0,0,1,200,212Z"/></symbol>
+    <symbol id="i-road-horizon" viewBox="0 0 256 256" fill="currentColor"><path d="M237.88,202.46a12,12,0,0,1-16.34-4.58L153,76H140v4a12,12,0,0,1-24,0V76H103L34.46,197.88a12,12,0,1,1-20.92-11.76L75.48,76H24a12,12,0,0,1,0-24H232a12,12,0,0,1,0,24H180.52l61.94,110.12A12,12,0,0,1,237.88,202.46ZM128,108a12,12,0,0,0-12,12v16a12,12,0,0,0,24,0V120A12,12,0,0,0,128,108Zm0,56a12,12,0,0,0-12,12v16a12,12,0,0,0,24,0V176A12,12,0,0,0,128,164Z"/></symbol>
+    <symbol id="i-thermometer-simple" viewBox="0 0 256 256" fill="currentColor"><path d="M180,150.69V56A52,52,0,0,0,76,56v94.69a64,64,0,1,0,104,0ZM128,228a40,40,0,0,1-30.91-65.39,12,12,0,0,0,2.91-7.83V56a28,28,0,0,1,56,0v98.77a12,12,0,0,0,2.77,7.68A40,40,0,0,1,128,228Zm24-40a24,24,0,1,1-36-20.78V92a12,12,0,0,1,24,0v75.22A24,24,0,0,1,152,188Z"/></symbol>
+    <symbol id="i-gauge" viewBox="0 0 256 256" fill="currentColor"><path d="M209.88,69.83A115.19,115.19,0,0,0,128,36h-.41C63.85,36.22,12,88.76,12,153.13V176a20,20,0,0,0,20,20H224a20,20,0,0,0,20-20V152A115.25,115.25,0,0,0,209.88,69.83ZM220,172H127.32l46.44-65A12,12,0,1,0,154.24,93L97.82,172H36V153.13c0-1.72,0-3.43.14-5.13H56a12,12,0,0,0,0-24H40.62c10.91-33.39,40-58.52,75.38-63.21V80a12,12,0,0,0,24,0V60.8A92,92,0,0,1,215.66,124H200a12,12,0,0,0,0,24h19.9c.06,1.33.1,2.66.1,4Z"/></symbol>
+    <symbol id="i-hand-grabbing" viewBox="0 0 256 256" fill="currentColor"><path d="M188,76a31.85,31.85,0,0,0-11.21,2,32,32,0,0,0-48.79-11A32,32,0,0,0,76,92v16H68a32,32,0,0,0-32,32v12a92,92,0,0,0,184,0V108A32,32,0,0,0,188,76Zm8,76a68,68,0,0,1-136,0V140a8,8,0,0,1,8-8h8v20a12,12,0,0,0,24,0V92a8,8,0,0,1,16,0v28a12,12,0,0,0,24,0V92a8,8,0,0,1,16,0v28a12,12,0,0,0,24,0V108a8,8,0,0,1,16,0Z"/></symbol>
+    <symbol id="i-sneaker-move" viewBox="0 0 256 256" fill="currentColor"><path d="M232.94,163.06l-28.62-14.31A43.78,43.78,0,0,1,180,109.39V80a12,12,0,0,0-12-12,44.05,44.05,0,0,1-44-44,12,12,0,0,0-19.25-9.56l-77,58.41-.3.23a20,20,0,0,0-1.56,29.69L139.57,216.49a12,12,0,0,0,8.49,3.51H224a20,20,0,0,0,20-20V180.94A19.88,19.88,0,0,0,232.94,163.06ZM220,196H153L46.08,89.05l12.86-9.76,41.2,41.2a12,12,0,0,0,17-17L78.25,64.65l25.24-19.14A68.24,68.24,0,0,0,156,90.94v18.45a67.62,67.62,0,0,0,37.59,60.82L220,183.42ZM55.49,184H32a12,12,0,0,1,0-24H55.49a12,12,0,0,1,0,24Zm48,24a12,12,0,0,1-12,12H48a12,12,0,0,1,0-24H91.49A12,12,0,0,1,103.49,208Z"/></symbol>
+    <symbol id="i-tire" viewBox="0 0 256 256" fill="currentColor"><path d="M152,128c0-22.09,7.16-40,16-40s16,17.91,16,40-7.16,40-16,40S152,150.09,152,128Zm92,96a12,12,0,0,1-12,12H92c-18.5,0-35.3-12.22-47.32-34.4C33.92,181.74,28,155.6,28,128s5.92-53.74,16.68-73.6C56.7,32.22,73.5,20,92,20h72c18.5,0,35.3,12.22,47.32,34.4C222.08,74.26,228,100.4,228,128s-5.92,53.74-16.68,73.6a95.07,95.07,0,0,1-6.51,10.4H232A12,12,0,0,1,244,224ZM164,44c-18.92,0-40,34.5-40,84s21.08,84,40,84,40-34.5,40-84S182.92,44,164,44ZM54.33,155.59,73,142.24a12,12,0,0,1,13.94,0l14.66,10.46A186.77,186.77,0,0,1,100,128c0-3.61.11-7.2.31-10.75L80,102.75,52.09,122.68C52,124.44,52,126.21,52,128A160.1,160.1,0,0,0,54.33,155.59ZM56.54,90,73,78.24a12,12,0,0,1,13.94,0l16.91,12.07a134.79,134.79,0,0,1,12.8-35.91A95.07,95.07,0,0,1,123.19,44H92C78.44,44,63.77,61.73,56.54,90ZM92,212h31.19a95.07,95.07,0,0,1-6.51-10.4,115.79,115.79,0,0,1-6-12.91L80,166.75,61.14,180.22C69,200.08,80.88,212,92,212Z"/></symbol>
+    <symbol id="i-motorcycle" viewBox="0 0 256 256" fill="currentColor"><path d="M208,112c-.57,0-1.13,0-1.69,0l-3.5-11.8c1.71-.15,3.44-.24,5.19-.24a12,12,0,0,0,0-24H195.63l-8.12-27.41A12,12,0,0,0,176,40H144a12,12,0,0,0,0,24h23l3.56,12H152c-19.44,0-35.32,4.62-45.92,13.37a12,12,0,0,1-12.56,1.52c-13.13-6-57.19-25-61.65-26.89L26.6,61.76S22.4,60,20,60a12,12,0,0,0-4.61,23.08c1.72.73,43.67,18.5,68.2,29.66a36.25,36.25,0,0,0,15,3.23,35.78,35.78,0,0,0,22.78-8.09c5.74-4.73,15.58-7.48,27.89-7.84a84,84,0,0,0-24.4,48H94.48a48,48,0,1,0,0,24H136a12,12,0,0,0,12-12,60,60,0,0,1,31.8-52.94l3.5,11.8A48,48,0,1,0,208,112ZM48,172H68.77a24,24,0,1,1,0-24H48a12,12,0,0,0,0,24Zm160,12a24,24,0,0,1-17.4-40.5l5.89,19.91A12,12,0,0,0,208,172a12.28,12.28,0,0,0,3.41-.49,12,12,0,0,0,8.1-14.92l-5.91-19.92A24,24,0,0,1,208,184Z"/></symbol>
+    <symbol id="i-mountains" viewBox="0 0 256 256" fill="currentColor"><path d="M160,80a32,32,0,1,0-32-32A32,32,0,0,0,160,80Zm0-40a8,8,0,1,1-8,8A8,8,0,0,1,160,40Zm94.32,153.88L199.76,101.8A19.85,19.85,0,0,0,182.55,92h0a19.83,19.83,0,0,0-17.2,9.8l-18.7,31.55-37.42-63.5a20,20,0,0,0-34.46,0L1.66,193.91A12,12,0,0,0,12,212H244a12,12,0,0,0,10.32-18.12ZM92,87.87,108.57,116H75.43ZM33,188l28.28-48h61.44L151,188Zm145.86,0L160.56,157l22-37.1L222.94,188Z"/></symbol>
+    <symbol id="i-cloud-rain" viewBox="0 0 256 256" fill="currentColor"><path d="M156,12A80.22,80.22,0,0,0,82.39,60.36,56.76,56.76,0,0,0,76,60a56,56,0,0,0,0,112h29.58L86,201.34a12,12,0,1,0,20,13.32L134.42,172H156a80,80,0,0,0,0-160Zm0,136H76a32,32,0,0,1,0-64h.28c-.11,1.1-.2,2.2-.26,3.3a12,12,0,1,0,24,1.39A56.06,56.06,0,1,1,156,148Zm.65,58.66-26.67,40a12,12,0,1,1-20-13.32l26.66-40a12,12,0,1,1,20,13.32Z"/></symbol>
+    <symbol id="i-flag-checkered" viewBox="0 0 256 256" fill="currentColor"><path d="M229,45a12,12,0,0,0-12.85,1.84c-24.71,21.41-44.53,13.31-74.82-1.68C113.19,31.27,78.17,13.94,40.14,46.88A12,12,0,0,0,36,56V224a12,12,0,0,0,24,0V181.71c22.84-17.13,42.1-9.11,70.68,5,16.23,8,34.74,17.2,54.8,17.2,14.72,0,30.28-4.94,46.38-18.88A12,12,0,0,0,236,176V56A12,12,0,0,0,229,45ZM185.48,83.91A63,63,0,0,0,212,78.08v32.15c-11,8.26-21.2,10.67-32,9.37V83.66C181.81,83.81,183.64,83.91,185.48,83.91ZM156,78.08v34.09c-4.64-2-9.5-4.4-14.68-7A255.21,255.21,0,0,0,116,93.83V59.75c4.64,2,9.5,4.4,14.68,7A252.91,252.91,0,0,0,156,78.08ZM92,52.32V88.24a63.33,63.33,0,0,0-32,5.61V61.68C71,53.42,81.2,51,92,52.32ZM86.52,148A63,63,0,0,0,60,153.86V121.7c11-8.25,21.2-10.66,32-9.36v35.94C90.19,148.13,88.36,148,86.52,148ZM116,153.86V119.77c4.64,2,9.5,4.4,14.68,7A252.91,252.91,0,0,0,156,138.1v34.09c-4.64-2.05-9.5-4.4-14.68-7A250.66,250.66,0,0,0,116,153.86Zm64,25.76V143.68c1.81.14,3.64.24,5.48.24A62.85,62.85,0,0,0,212,138.07v32.19C201,178.52,190.8,180.92,180,179.62Z"/></symbol>
+    <symbol id="i-timer" viewBox="0 0 256 256" fill="currentColor"><path d="M128,44a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,44Zm0,168a72,72,0,1,1,72-72A72.08,72.08,0,0,1,128,212ZM164.49,99.51a12,12,0,0,1,0,17l-28,28a12,12,0,0,1-17-17l28-28A12,12,0,0,1,164.49,99.51ZM92,16A12,12,0,0,1,104,4h48a12,12,0,0,1,0,24H104A12,12,0,0,1,92,16Z"/></symbol>
+    <symbol id="i-engine" viewBox="0 0 256 256" fill="currentColor"><path d="M236,100H225L190.83,65.86A19.86,19.86,0,0,0,176.69,60H144V44h20a12,12,0,0,0,0-24H100a12,12,0,0,0,0,24h20V60H64A20,20,0,0,0,44,80v48H28V108a12,12,0,0,0-24,0v64a12,12,0,0,0,24,0V152H44v16.69a19.86,19.86,0,0,0,5.86,14.14l39.31,39.31A19.86,19.86,0,0,0,103.31,228h73.38a19.86,19.86,0,0,0,14.14-5.86L225,188h11a20,20,0,0,0,20-20V120A20,20,0,0,0,236,100Zm-4,64H220a12,12,0,0,0-8.49,3.51L175,204H105L68,167V84H175l36.48,36.49A12,12,0,0,0,220,124h12Z"/></symbol>
+    <symbol id="i-pencil-simple" viewBox="0 0 256 256" fill="currentColor"><path d="M230.14,70.54,185.46,25.85a20,20,0,0,0-28.29,0L33.86,149.17A19.85,19.85,0,0,0,28,163.31V208a20,20,0,0,0,20,20H92.69a19.86,19.86,0,0,0,14.14-5.86L230.14,98.82a20,20,0,0,0,0-28.28ZM91,204H52V165l84-84,39,39ZM192,103,153,64l18.34-18.34,39,39Z"/></symbol>
+    <symbol id="i-caret-left" viewBox="0 0 256 256" fill="currentColor"><path d="M168.49,199.51a12,12,0,0,1-17,17l-80-80a12,12,0,0,1,0-17l80-80a12,12,0,0,1,17,17L97,128Z"/></symbol>
+    <symbol id="i-arrow-counter-clockwise" viewBox="0 0 256 256" fill="currentColor"><path d="M228,128a100,100,0,0,1-98.66,100H128a99.39,99.39,0,0,1-68.62-27.29,12,12,0,0,1,16.48-17.45,76,76,0,1,0-1.57-109c-.13.13-.25.25-.39.37L54.89,92H72a12,12,0,0,1,0,24H24a12,12,0,0,1-12-12V56a12,12,0,0,1,24,0V76.72L57.48,57.06A100,100,0,0,1,228,128Z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 256 256" fill="currentColor"><path d="M228,128a12,12,0,0,1-12,12H140v76a12,12,0,0,1-24,0V140H40a12,12,0,0,1,0-24h76V40a12,12,0,0,1,24,0v76h76A12,12,0,0,1,228,128Z"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 256 256" fill="currentColor"><path d="M216,48H180V36A28,28,0,0,0,152,8H104A28,28,0,0,0,76,36V48H40a12,12,0,0,0,0,24h4V208a20,20,0,0,0,20,20H192a20,20,0,0,0,20-20V72h4a12,12,0,0,0,0-24ZM100,36a4,4,0,0,1,4-4h48a4,4,0,0,1,4,4V48H100Zm88,168H68V72H188ZM116,104v64a12,12,0,0,1-24,0V104a12,12,0,0,1,24,0Zm48,0v64a12,12,0,0,1-24,0V104a12,12,0,0,1,24,0Z"/></symbol>
+    <symbol id="i-crosshair-simple" viewBox="0 0 256 256" fill="currentColor"><path d="M128,20A108,108,0,1,0,236,128,108.12,108.12,0,0,0,128,20Zm12,191.13V184a12,12,0,0,0-24,0v27.13A84.18,84.18,0,0,1,44.87,140H72a12,12,0,0,0,0-24H44.87A84.18,84.18,0,0,1,116,44.87V72a12,12,0,0,0,24,0V44.87A84.18,84.18,0,0,1,211.13,116H184a12,12,0,0,0,0,24h27.13A84.18,84.18,0,0,1,140,211.13Z"/></symbol>
+    <symbol id="i-check-circle" viewBox="0 0 256 256" fill="currentColor"><path d="M176.49,95.51a12,12,0,0,1,0,17l-56,56a12,12,0,0,1-17,0l-24-24a12,12,0,1,1,17-17L112,143l47.51-47.52A12,12,0,0,1,176.49,95.51ZM236,128A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-24,0a84,84,0,1,0-84,84A84.09,84.09,0,0,0,212,128Z"/></symbol>
+    <symbol id="i-warning-circle" viewBox="0 0 256 256" fill="currentColor"><path d="M128,20A108,108,0,1,0,236,128,108.12,108.12,0,0,0,128,20Zm0,192a84,84,0,1,1,84-84A84.09,84.09,0,0,1,128,212Zm-12-80V80a12,12,0,0,1,24,0v52a12,12,0,0,1-24,0Zm28,40a16,16,0,1,1-16-16A16,16,0,0,1,144,172Z"/></symbol>
+    <symbol id="i-warning" viewBox="0 0 256 256" fill="currentColor"><path d="M240.26,186.1,152.81,34.23h0a28.74,28.74,0,0,0-49.62,0L15.74,186.1a27.45,27.45,0,0,0,0,27.71A28.31,28.31,0,0,0,40.55,228h174.9a28.31,28.31,0,0,0,24.79-14.19A27.45,27.45,0,0,0,240.26,186.1Zm-20.8,15.7a4.46,4.46,0,0,1-4,2.2H40.55a4.46,4.46,0,0,1-4-2.2,3.56,3.56,0,0,1,0-3.73L124,46.2a4.77,4.77,0,0,1,8,0l87.44,151.87A3.56,3.56,0,0,1,219.46,201.8ZM116,136V104a12,12,0,0,1,24,0v32a12,12,0,0,1-24,0Zm28,40a16,16,0,1,1-16-16A16,16,0,0,1,144,176Z"/></symbol>
+    <!-- Warning lamps: drawn for this dashboard after the ISO 2575 tell-tale symbols. -->
+    <symbol id="t-neutral" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M9 16.5v-9l6 9v-9"/></g></symbol>
+    <symbol id="t-stand" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="13.5" r="3.3"/><circle cx="18.5" cy="13.5" r="3.3"/><path d="M5.5 13.5 9 8.5h6.5M16.5 5l2 8.5M15 5h3"/><path d="M11.5 10.5 9 20.5h3.5" stroke-width="2.6"/></g></symbol>
+    <symbol id="t-kill" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 5.9A7 7 0 1 1 10.8 5.1"/><path d="M8.2 2.9l2.6 2.2-2.2 2.6"/><path d="M4 4l16 16"/></g></symbol>
+    <symbol id="t-temp" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v9.2M12 5.8h3.2M12 9h3.2"/><circle cx="12" cy="15" r="2.6"/><path d="M2.8 20.6c1.5-1.2 3-1.2 4.6 0s3 1.2 4.6 0 3-1.2 4.6 0 3 1.2 4.6 0"/></g></symbol>
+    <symbol id="t-tc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9.8" r="7"/><text x="12" y="12.2" text-anchor="middle" font-size="6.8" font-weight="800" fill="currentColor" stroke="none" font-family="Saira Condensed, Arial Narrow, sans-serif">TC</text><path d="M3.5 21.3c1.2-1.5 2.4-1.5 3.6 0s2.4 1.5 3.6 0M13.3 21.3c1.2-1.5 2.4-1.5 3.6 0s2.4 1.5 3.6 0"/></g></symbol>
+    <symbol id="t-abs" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7.2"/><path d="M3.4 6.8a10.5 10.5 0 0 0 0 10.4M20.6 6.8a10.5 10.5 0 0 1 0 10.4"/><text x="12" y="14.4" text-anchor="middle" font-size="6.6" font-weight="800" fill="currentColor" stroke="none" font-family="Saira Condensed, Arial Narrow, sans-serif">ABS</text></g></symbol>
+    <symbol id="t-clutch" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 9h5.5"/><circle cx="10" cy="9" r="2"/><path d="M11.8 10.2c3.4 1 6.4 2.9 9.4 5.9M10 7V3.5"/></g></symbol>
+    <symbol id="t-brake" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="8" width="11" height="8" rx="2"/><path d="M2.5 12h2M19.5 12h2M4.6 5.6l1.6 1.6M19.4 5.6l-1.6 1.6M4.6 18.4l1.6-1.6M19.4 18.4l-1.6-1.6"/></g></symbol>
+  </svg>
+
+  <!-- The screen's top line: warning lamps on every page, like a real cluster. -->
+  <header class="topline">
+    <ul class="lamps" aria-label="Warning lamps">
+      <li id="lamp-neutral" class="lamp green" title="Neutral"><svg class="t" aria-hidden="true"><use href="#t-neutral"/></svg><span>Neutral</span></li>
+      <li id="lamp-stand" class="lamp amber" title="Side stand down"><svg class="t" aria-hidden="true"><use href="#t-stand"/></svg><span>Side stand</span></li>
+      <li id="lamp-kill" class="lamp red" title="Kill switch on Stop"><svg class="t" aria-hidden="true"><use href="#t-kill"/></svg><span>Engine stop</span></li>
+      <li id="lamp-temp" class="lamp red" title="Coolant 105 °C or hotter"><svg class="t" aria-hidden="true"><use href="#t-temp"/></svg><span>Coolant</span></li>
+      <li id="lamp-tc" class="lamp amber" title="Traction control off"><svg class="t" aria-hidden="true"><use href="#t-tc"/></svg><span>TC off</span></li>
+      <li id="lamp-abs" class="lamp amber" title="ABS in Offroad mode"><svg class="t" aria-hidden="true"><use href="#t-abs"/></svg><span>ABS offroad</span></li>
+      <li id="lamp-clutch" class="lamp white" title="Clutch lever pulled"><svg class="t" aria-hidden="true"><use href="#t-clutch"/></svg><span>Clutch</span></li>
+      <li id="lamp-brake" class="lamp red" title="Brake light on"><svg class="t" aria-hidden="true"><use href="#t-brake"/></svg><span>Brake</span></li>
+    </ul>
+    <div class="topline-end">
+      <span id="clock" class="clock">--:--</span>
+      <div class="seg">
+        <span class="link" id="link-state" role="status"><svg class="i link-icon" id="link-dot" aria-hidden="true"><use href="#i-bluetooth"/></svg><span id="link-text">Not connected</span></span>
+        <button type="button" id="theme" class="key small" title="Switch day or night display"><svg class="i" aria-hidden="true"><use id="theme-icon" href="#i-sun"/></svg><span id="theme-text">Day</span></button>
+      </div>
+    </div>
+  </header>
+
+  <div id="notice" class="notice" role="status" hidden></div>
+
+  <main id="main" tabindex="-1">
+    <!-- RIDE: the cluster ---------------------------------------------------->
+    <section id="view-ride" class="view cluster" aria-label="Ride display">
+      <!-- Each ride mode has its own cluster. Only the one for the bike's mode is shown (see [data-mode] in style.css). -->
+      <div class="stage">
+
+        <!-- STREET: a glowing rev line that climbs a ramp and rises gently along the top, blue to white to red. Ride mode and
+             rider aids sit inside its bend, pedals under the ramp, italic speed in the middle, gear and fuel on the right. -->
+        <div class="layout layout-street">
+          <svg class="screen-svg wide-svg" viewBox="0 0 1760 700" role="img" aria-label="Street cluster">
+            <g class="sweep" data-stretch="x1" data-x0="40" data-y0="450" data-angle="37" data-r="200" data-top="156" data-x1="1680" data-rise="60" data-glow="120" data-num="48" data-font="40"></g>
+
+            <g class="mode-pill"><rect x="440" y="296" width="236" height="72" rx="36"/><use data-mode-icon href="#i-motorcycle" x="464" y="312" width="40" height="40"/><text class="mode-name" x="514" y="349" font-size="50" data-bind="rideMode">--</text></g>
+            <use href="#t-tc" x="440" y="394" width="36" height="36"/><text class="aid-lbl" x="486" y="423" font-size="32">TRACTION</text><text class="val" x="676" y="424" font-size="38" text-anchor="end" data-bind="traction">--</text>
+            <use href="#t-abs" x="440" y="448" width="36" height="36"/><text class="aid-lbl" x="486" y="477" font-size="32">ABS</text><text class="val" x="676" y="478" font-size="38" text-anchor="end" data-bind="abs">--</text>
+
+            <g class="inbar long"><text class="lbl" x="150" y="580" font-size="21">THROTTLE</text><rect class="track" x="150" y="590" width="526" height="10" rx="5"/><rect class="fill" data-meter="throttle" x="150" y="590" width="526" height="10" rx="5"/></g>
+            <g class="inbar long brake"><text class="lbl" x="150" y="626" font-size="21">FRONT BRAKE</text><rect class="track" x="150" y="636" width="526" height="10" rx="5"/><rect class="fill" data-meter="brake" x="150" y="636" width="526" height="10" rx="5"/></g>
+            <g class="inbar long brake rear"><text class="lbl" x="150" y="672" font-size="21">REAR BRAKE</text><rect class="track" x="150" y="682" width="526" height="10" rx="5"/><rect class="fill" data-meter="rearBrake" x="150" y="682" width="526" height="10" rx="5"/></g>
+
+            <line class="rule" x1="706" y1="300" x2="706" y2="692"/>
+
+            <g data-anchor="center">
+              <text class="speed slant" x="1026" y="560" font-size="350" text-anchor="middle" data-bind="speed">--</text>
+              <text class="unit-lg" x="1026" y="614" font-size="44" text-anchor="middle">km/h</text>
+              <text class="uncal" x="1026" y="652" font-size="20" text-anchor="middle" data-show="uncal">Speed not calibrated</text>
+            </g>
+
+            <g data-anchor="right">
+              <text class="cap rpm-cap" x="1690" y="262" font-size="22" text-anchor="end">×1000 r/min</text>
+              <rect class="gear-card" x="1356" y="300" width="190" height="300" rx="20"/>
+              <text class="cap" x="1451" y="342" font-size="26" text-anchor="middle">GEAR</text>
+              <text class="gear" x="1451" y="546" font-size="228" text-anchor="middle" data-bind="gear">--</text>
+              <rect class="gear-accent" x="1391" y="568" width="120" height="9" rx="4.5"/>
+
+              <text class="cap" x="1650" y="312" font-size="22" text-anchor="middle">F</text>
+              <g class="segbar fine" data-kind="fuel" data-dir="v" data-x="1630" data-y="324" data-w="40" data-h="262" data-n="22" data-gap="4.5"></g>
+              <text class="cap" x="1650" y="612" font-size="22" text-anchor="middle">E</text>
+              <use href="#i-gas-pump" x="1580" y="546" width="38" height="38"/>
+              <text class="val" x="1650" y="664" font-size="32" text-anchor="middle"><tspan data-bind="fuel">--</tspan><tspan class="unit" dx="4" font-size="20">L</tspan></text>
+            </g>
+          </svg>
+
+          <svg class="screen-svg tall-svg" viewBox="0 0 600 600" role="img" aria-label="Street cluster">
+            <g class="sweep" data-x0="60" data-y0="300" data-angle="37" data-r="120" data-top="122" data-x1="564" data-rise="26" data-glow="66" data-num="46" data-font="22"></g>
+            <text class="cap" x="564" y="180" font-size="14" text-anchor="end">×1000 r/min</text>
+
+            <text class="speed slant" x="310" y="352" font-size="170" text-anchor="middle" data-bind="speed">--</text>
+            <text class="unit-lg" x="310" y="388" font-size="24" text-anchor="middle">km/h</text>
+            <text class="uncal" x="310" y="410" font-size="13" text-anchor="middle" data-show="uncal">Speed not calibrated</text>
+
+            <rect class="gear-card" x="470" y="190" width="106" height="166" rx="14"/>
+            <text class="cap" x="523" y="210" font-size="14" text-anchor="middle">GEAR</text>
+            <text class="gear" x="523" y="330" font-size="130" text-anchor="middle" data-bind="gear">--</text>
+            <rect class="gear-accent" x="498" y="342" width="50" height="4" rx="2"/>
+
+            <line class="rule" x1="24" y1="434" x2="576" y2="434"/>
+            <use data-mode-icon href="#i-motorcycle" x="24" y="452" width="30" height="30"/>
+            <text class="mode-name" x="62" y="478" font-size="30" data-bind="rideMode">--</text>
+            <use href="#t-tc" x="250" y="454" width="26" height="26"/><text class="lbl" x="284" y="476" font-size="20">TC</text><text class="val" x="386" y="477" font-size="24" text-anchor="end" data-bind="traction">--</text>
+            <use href="#t-abs" x="420" y="454" width="26" height="26"/><text class="lbl" x="454" y="476" font-size="20">ABS</text><text class="val" x="576" y="477" font-size="24" text-anchor="end" data-bind="abs">--</text>
+            <g class="inbar long"><text class="lbl" x="24" y="526" font-size="13">THROTTLE</text><rect class="track" x="24" y="536" width="160" height="6" rx="3"/><rect class="fill" data-meter="throttle" x="24" y="536" width="160" height="6" rx="3"/></g>
+            <g class="inbar long brake"><text class="lbl" x="220" y="526" font-size="13">FRONT BRAKE</text><rect class="track" x="220" y="536" width="160" height="6" rx="3"/><rect class="fill" data-meter="brake" x="220" y="536" width="160" height="6" rx="3"/></g>
+            <g class="inbar long brake rear"><text class="lbl" x="416" y="526" font-size="13">REAR BRAKE</text><rect class="track" x="416" y="536" width="160" height="6" rx="3"/><rect class="fill" data-meter="rearBrake" x="416" y="536" width="160" height="6" rx="3"/></g>
+            <use href="#i-gas-pump" x="24" y="560" width="24" height="24"/>
+            <g class="segbar" data-kind="fuel" data-x="58" data-y="566" data-w="400" data-h="14" data-n="10" data-gap="4"></g>
+            <text class="val" x="576" y="582" font-size="22" text-anchor="end"><tspan data-bind="fuel">--</tspan><tspan class="unit" dx="4" font-size="15">L</tspan></text>
+          </svg>
+        </div>
+
+        <!-- RAIN: reduced and calm, after BMW's Pure Ride screen: a rev counter of very thin bars, big light speed, grip status. -->
+        <div class="layout layout-rain">
+          <svg class="screen-svg wide-svg" viewBox="0 0 1600 700" role="img" aria-label="Rain cluster">
+            <g class="mode-badge"><use data-mode-icon href="#i-cloud-rain" x="60" y="34" width="40" height="40"/><text x="112" y="68" font-size="34" data-bind="rideMode">--</text></g>
+            <g class="segbar" data-stretch="w" data-kind="rpm" data-x="60" data-y="92" data-w="1480" data-h="64" data-n="130" data-gap="9"></g>
+            <g class="scale" data-stretch="w" data-x="60" data-w="1480" data-y="190" data-font="24"></g>
+
+            <circle class="gear-ring" cx="250" cy="370" r="128"/>
+            <text class="gear" x="250" y="445" font-size="210" text-anchor="middle" data-bind="gear">--</text>
+            <text class="cap" x="250" y="546" font-size="24" text-anchor="middle">GEAR</text>
+
+            <g data-anchor="center">
+            <text class="speed" x="790" y="490" font-size="340" text-anchor="middle" data-bind="speed">--</text>
+            <text class="unit-lg" x="790" y="552" font-size="40" text-anchor="middle">km/h</text>
+            <text class="uncal" x="790" y="592" font-size="22" text-anchor="middle" data-show="uncal">Speed not calibrated</text>
+            </g>
+
+            <g data-anchor="right">
+            <g class="row"><use href="#t-tc" x="1250" y="262" width="36" height="36"/><text class="lbl" x="1298" y="290" font-size="28">Traction</text><text class="val" x="1540" y="292" font-size="34" text-anchor="end" data-bind="traction">--</text></g>
+            <line class="rule" x1="1250" y1="322" x2="1540" y2="322"/>
+            <g class="row"><use href="#t-abs" x="1250" y="346" width="36" height="36"/><text class="lbl" x="1298" y="374" font-size="28">ABS</text><text class="val" x="1540" y="376" font-size="34" text-anchor="end" data-bind="abs">--</text></g>
+            <line class="rule" x1="1250" y1="406" x2="1540" y2="406"/>
+            <g class="row"><use href="#i-thermometer-simple" x="1250" y="430" width="36" height="36"/><text class="lbl" x="1298" y="458" font-size="28">Coolant</text><text class="val" x="1540" y="460" font-size="34" text-anchor="end"><tspan data-bind="coolant">--</tspan> °C</text></g>
+            </g>
+
+            <use href="#i-gas-pump" x="60" y="620" width="34" height="34"/>
+            <rect class="track" x="110" y="633" width="520" height="8" rx="4"/>
+            <rect class="fill fuel-fill" data-meter="fuel" x="110" y="633" width="520" height="8" rx="4"/>
+            <text class="val" x="660" y="648" font-size="32"><tspan data-bind="fuel">--</tspan><tspan class="unit" dx="6" font-size="22">L est.</tspan></text>
+            <text class="val" data-anchor="right" x="1540" y="648" font-size="32" text-anchor="end"><tspan data-bind="range">--</tspan><tspan class="unit" dx="8" font-size="22">km range</tspan></text>
+          </svg>
+
+          <svg class="screen-svg tall-svg" viewBox="0 0 600 690" role="img" aria-label="Rain cluster">
+            <g class="mode-badge"><use data-mode-icon href="#i-cloud-rain" x="24" y="22" width="32" height="32"/><text x="64" y="50" font-size="28" data-bind="rideMode">--</text></g>
+            <g class="segbar" data-kind="rpm" data-x="24" data-y="70" data-w="552" data-h="40" data-n="60" data-gap="5"></g>
+            <g class="scale" data-x="24" data-w="552" data-y="134" data-font="18"></g>
+
+            <text class="speed" x="20" y="390" font-size="250" data-bind="speed">--</text>
+            <text class="unit-lg" x="26" y="440" font-size="30">km/h</text>
+            <text class="uncal" x="110" y="438" font-size="18" data-show="uncal">Speed not calibrated</text>
+
+            <circle class="gear-ring" cx="484" cy="268" r="84"/>
+            <text class="gear" x="484" y="318" font-size="140" text-anchor="middle" data-bind="gear">--</text>
+            <text class="cap" x="484" y="384" font-size="18" text-anchor="middle">GEAR</text>
+
+            <g class="row"><use href="#t-tc" x="24" y="478" width="30" height="30"/><text class="lbl" x="64" y="502" font-size="24">Traction</text><text class="val" x="576" y="503" font-size="28" text-anchor="end" data-bind="traction">--</text></g>
+            <line class="rule" x1="24" y1="526" x2="576" y2="526"/>
+            <g class="row"><use href="#t-abs" x="24" y="542" width="30" height="30"/><text class="lbl" x="64" y="566" font-size="24">ABS</text><text class="val" x="576" y="567" font-size="28" text-anchor="end" data-bind="abs">--</text></g>
+            <line class="rule" x1="24" y1="590" x2="576" y2="590"/>
+            <g class="row"><use href="#i-thermometer-simple" x="24" y="606" width="30" height="30"/><text class="lbl" x="64" y="630" font-size="24">Coolant</text><text class="val" x="576" y="631" font-size="28" text-anchor="end"><tspan data-bind="coolant">--</tspan> °C</text></g>
+            <use href="#i-gas-pump" x="24" y="650" width="28" height="28"/>
+            <rect class="track" x="64" y="661" width="300" height="7" rx="3.5"/>
+            <rect class="fill fuel-fill" data-meter="fuel" x="64" y="661" width="300" height="7" rx="3.5"/>
+            <text class="val" x="576" y="672" font-size="24" text-anchor="end"><tspan data-bind="fuel">--</tspan> L / <tspan data-bind="range">--</tspan> km</text>
+          </svg>
+        </div>
+
+        <!-- OFFROAD: after rally and adventure TFTs (Ducati DesertX, Africa Twin): big speed and gear, straight rev bar,
+             fuel and coolant as edge gauges, rider aids as plain status pills. -->
+        <div class="layout layout-offroad">
+          <svg class="screen-svg wide-svg" viewBox="0 0 1600 700" role="img" aria-label="Offroad cluster">
+            <g class="mode-badge"><rect x="50" y="30" width="230" height="60" rx="10"/><use data-mode-icon href="#i-mountains" x="66" y="40" width="40" height="40"/><text x="116" y="72" font-size="32" data-bind="rideMode">--</text></g>
+            <g class="segbar" data-stretch="w" data-kind="rpm" data-x="310" data-y="30" data-w="1240" data-h="60" data-n="48" data-gap="6"></g>
+            <g class="scale" data-stretch="w" data-x="310" data-w="1240" data-y="118" data-font="22"></g>
+
+            <text class="cap" x="88" y="174" font-size="24" text-anchor="middle">F</text>
+            <g class="segbar" data-kind="fuel" data-dir="v" data-x="60" data-y="186" data-w="56" data-h="360" data-n="12" data-gap="6"></g>
+            <text class="cap" x="88" y="574" font-size="24" text-anchor="middle">E</text>
+            <use href="#i-gas-pump" x="68" y="592" width="40" height="40"/>
+            <text class="val big" x="146" y="470" font-size="56"><tspan data-bind="fuel">--</tspan><tspan class="unit" dx="6" font-size="26">L</tspan></text>
+            <text class="cap" x="148" y="504" font-size="20">FUEL LEFT</text>
+            <text class="val big" x="146" y="574" font-size="44"><tspan data-bind="range">--</tspan><tspan class="unit" dx="6" font-size="24">km</tspan></text>
+            <text class="cap" x="148" y="606" font-size="20">RANGE</text>
+
+            <g data-anchor="right">
+            <text class="cap" x="1512" y="174" font-size="24" text-anchor="middle">H</text>
+            <g class="segbar" data-kind="coolant" data-dir="v" data-x="1484" data-y="186" data-w="56" data-h="360" data-n="12" data-gap="6"></g>
+            <text class="cap" x="1512" y="574" font-size="24" text-anchor="middle">C</text>
+            <use href="#i-thermometer-simple" x="1492" y="592" width="40" height="40"/>
+            <text class="val big" x="1452" y="470" font-size="56" text-anchor="end"><tspan data-bind="coolant">--</tspan><tspan class="unit" dx="6" font-size="26">°C</tspan></text>
+            <text class="cap" x="1450" y="504" font-size="20" text-anchor="end">COOLANT</text>
+            </g>
+
+            <g data-anchor="center">
+            <text class="speed" x="660" y="470" font-size="330" text-anchor="middle" data-bind="speed">--</text>
+            <text class="unit-lg" x="660" y="528" font-size="42" text-anchor="middle">km/h</text>
+            <text class="uncal" x="660" y="566" font-size="22" text-anchor="middle" data-show="uncal">Speed not calibrated</text>
+
+            <rect class="gear-box" x="1040" y="172" width="290" height="330" rx="24"/>
+            <rect class="gear-accent" x="1064" y="494" width="242" height="6" rx="3"/>
+            <text class="gear" x="1185" y="418" font-size="270" text-anchor="middle" data-bind="gear">--</text>
+            <text class="cap" x="1185" y="468" font-size="24" text-anchor="middle">GEAR</text>
+
+            <g class="pill" data-alert="traction"><rect x="420" y="608" width="420" height="66" rx="14"/><use href="#t-tc" x="442" y="622" width="38" height="38"/><text class="lbl" x="494" y="651" font-size="28">Traction</text><text class="val" x="816" y="653" font-size="34" text-anchor="end" data-bind="traction">--</text></g>
+            <g class="pill" data-alert="abs"><rect x="864" y="608" width="466" height="66" rx="14"/><use href="#t-abs" x="886" y="622" width="38" height="38"/><text class="lbl" x="938" y="651" font-size="28">ABS</text><text class="val" x="1306" y="653" font-size="34" text-anchor="end" data-bind="abs">--</text></g>
+            </g>
+          </svg>
+
+          <svg class="screen-svg tall-svg" viewBox="0 0 600 700" role="img" aria-label="Offroad cluster">
+            <g class="mode-badge"><rect x="20" y="16" width="200" height="50" rx="9"/><use data-mode-icon href="#i-mountains" x="34" y="25" width="32" height="32"/><text x="74" y="52" font-size="26" data-bind="rideMode">--</text></g>
+            <g class="segbar" data-kind="rpm" data-x="20" data-y="84" data-w="560" data-h="42" data-n="30" data-gap="4"></g>
+            <g class="scale" data-x="20" data-w="560" data-y="148" data-font="18"></g>
+
+            <text class="speed" x="18" y="420" font-size="250" data-bind="speed">--</text>
+            <text class="unit-lg" x="24" y="468" font-size="30">km/h</text>
+            <text class="uncal" x="104" y="466" font-size="18" data-show="uncal">Speed not calibrated</text>
+
+            <rect class="gear-box" x="404" y="186" width="176" height="238" rx="20"/>
+            <rect class="gear-accent" x="422" y="416" width="140" height="5" rx="2.5"/>
+            <text class="gear" x="492" y="364" font-size="190" text-anchor="middle" data-bind="gear">--</text>
+            <text class="cap" x="492" y="402" font-size="18" text-anchor="middle">GEAR</text>
+
+            <use href="#i-gas-pump" x="20" y="496" width="28" height="28"/>
+            <text class="val" x="56" y="519" font-size="26"><tspan data-bind="fuel">--</tspan> L <tspan class="unit" font-size="18">est.</tspan></text>
+            <text class="lbl" x="290" y="519" font-size="20" text-anchor="end"><tspan data-bind="range">--</tspan> km</text>
+            <g class="segbar" data-kind="fuel" data-x="20" data-y="534" data-w="270" data-h="26" data-n="10" data-gap="4"></g>
+            <use href="#i-thermometer-simple" x="310" y="496" width="28" height="28"/>
+            <text class="val" x="580" y="519" font-size="26" text-anchor="end"><tspan data-bind="coolant">--</tspan> °C</text>
+            <g class="segbar" data-kind="coolant" data-x="310" data-y="534" data-w="270" data-h="26" data-n="10" data-gap="4"></g>
+
+            <g class="pill" data-alert="traction"><rect x="20" y="596" width="272" height="60" rx="12"/><use href="#t-tc" x="36" y="610" width="32" height="32"/><text class="lbl" x="76" y="635" font-size="22">TC</text><text class="val" x="276" y="637" font-size="28" text-anchor="end" data-bind="traction">--</text></g>
+            <g class="pill" data-alert="abs"><rect x="308" y="596" width="272" height="60" rx="12"/><use href="#t-abs" x="324" y="610" width="32" height="32"/><text class="lbl" x="364" y="635" font-size="22">ABS</text><text class="val" x="564" y="637" font-size="28" text-anchor="end" data-bind="abs">--</text></g>
+          </svg>
+        </div>
+      </div>
+
+      <div class="tiles-row">
+        <div class="cluster-alert" id="cluster-alert" role="alert" hidden></div>
+        <div class="tiles" id="tiles" aria-label="Tiles"></div>
+        <div class="tiles-actions">
+          <button type="button" class="key small" id="open-trips"><svg class="i" aria-hidden="true"><use href="#i-path"/></svg>Trips</button>
+          <button type="button" class="key small" id="edit-tiles"><svg class="i" aria-hidden="true"><use href="#i-pencil-simple"/></svg>Edit tiles</button>
+        </div>
+      </div>
+
+      <!-- Shown for a moment when the ride mode changes, like the bike's own display. -->
+      <div class="mode-splash" id="mode-splash" aria-hidden="true" hidden>
+        <svg class="i"><use id="splash-icon" href="#i-road-horizon"/></svg>
+        <b id="splash-name"></b>
+        <span id="splash-detail"></span>
+      </div>
+
+      <!-- Takes over the cluster when there is nothing to ride with: not connected, engine stop switch off, engine off. -->
+      <div class="state-screen" id="state-screen" role="status" aria-live="polite" hidden>
+        <div class="state-body">
+          <svg class="state-icon" aria-hidden="true"><use id="state-icon" href="#i-bluetooth"/></svg>
+          <h1 id="state-title"></h1>
+          <p id="state-text"></p>
+          <ul class="checks" id="state-checks" hidden></ul>
+          <dl class="state-facts" id="state-facts" hidden></dl>
+          <div class="buttons">
+            <button type="button" id="state-action" hidden></button>
+            <button type="button" id="state-dismiss" class="quiet" hidden>Show the cluster</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRIPS: the screen behind the ride display --------------------------->
+    <section id="view-trips" class="view trips" hidden aria-label="Trips and fuel">
+      <div class="trips-head">
+        <button type="button" class="key back" id="trips-back">
+          <svg class="i" aria-hidden="true"><use href="#i-caret-left"/></svg>Ride</button>
+        <h1>Trips and fuel</h1>
+        <span class="flag" id="fuel-flag" title="Calibrate at a brim fill-up in Signals, Fuel">Fuel not calibrated</span>
+      </div>
+
+      <div class="trip-cards">
+        <section class="trip-card" id="trip-0">
+          <header><h2><svg class="i" aria-hidden="true"><use href="#i-path"/></svg>Trip 1</h2><button type="button" class="key small" data-reset-trip="0"><svg class="i" aria-hidden="true"><use href="#i-arrow-counter-clockwise"/></svg>Reset</button></header>
+          <div class="trip-lead"><span data-f="distance">--</span><small>km</small></div>
+          <dl class="trip-stats">
+            <div><dt>Fuel used</dt><dd><span data-f="fuel">--</span><small>L</small></dd></div>
+            <div><dt>Average economy</dt><dd><span data-f="economy">--</span><small>km/L</small></dd></div>
+            <div><dt>Average consumption</dt><dd><span data-f="per100">--</span><small>L/100 km</small></dd></div>
+            <div><dt>Average fuel rate</dt><dd><span data-f="rate">--</span><small>L/h</small></dd></div>
+            <div title="Distance divided by the time the engine was running"><dt>Average speed</dt><dd><span data-f="speed">--</span><small>km/h</small></dd></div>
+            <div><dt>Engine time</dt><dd data-f="time">--</dd></div>
+          </dl>
+        </section>
+        <section class="trip-card" id="trip-1">
+          <header><h2><svg class="i" aria-hidden="true"><use href="#i-path"/></svg>Trip 2</h2><button type="button" class="key small" data-reset-trip="1"><svg class="i" aria-hidden="true"><use href="#i-arrow-counter-clockwise"/></svg>Reset</button></header>
+          <div class="trip-lead"><span data-f="distance">--</span><small>km</small></div>
+          <dl class="trip-stats">
+            <div><dt>Fuel used</dt><dd><span data-f="fuel">--</span><small>L</small></dd></div>
+            <div><dt>Average economy</dt><dd><span data-f="economy">--</span><small>km/L</small></dd></div>
+            <div><dt>Average consumption</dt><dd><span data-f="per100">--</span><small>L/100 km</small></dd></div>
+            <div><dt>Average fuel rate</dt><dd><span data-f="rate">--</span><small>L/h</small></dd></div>
+            <div title="Distance divided by the time the engine was running"><dt>Average speed</dt><dd><span data-f="speed">--</span><small>km/h</small></dd></div>
+            <div><dt>Engine time</dt><dd data-f="time">--</dd></div>
+          </dl>
+        </section>
+      </div>
+
+      <div class="trip-cards">
+        <section class="trip-card">
+          <header><h2><svg class="i" aria-hidden="true"><use href="#i-gas-pump"/></svg>Fuel now</h2></header>
+          <dl class="trip-stats">
+            <div><dt>Using now</dt><dd><span id="fuel-rate">--</span><small>L/h</small></dd></div>
+            <div><dt>Economy now</dt><dd><span id="fuel-inst">--</span><small>km/L</small></dd></div>
+          </dl>
+        </section>
+        <section class="trip-card">
+          <header><h2><svg class="i" aria-hidden="true"><use href="#i-flag-checkered"/></svg>This ride</h2><button type="button" id="reset-session" class="key small"><svg class="i" aria-hidden="true"><use href="#i-arrow-counter-clockwise"/></svg>Reset</button></header>
+          <dl class="trip-stats">
+            <div><dt>Top speed</dt><dd><span id="max-speed">0</span><small>km/h</small></dd></div>
+            <div><dt>Peak</dt><dd><span id="max-rpm">0</span><small>rpm</small></dd></div>
+            <div><dt>Max lean</dt><dd id="max-lean">--</dd></div>
+          </dl>
+        </section>
+      </div>
+      <p class="hint">Trips count only while the dashboard is connected to the reader. Fuel figures use the bike's fuel flow (0x540) and stay estimates until you calibrate at a brim fill-up.</p>
+    </section>
+
+    <!-- BUS ----------------------------------------------------------------->
+    <section id="view-bus" class="view" hidden aria-label="Raw bus traffic">
+      <div class="device">
+        <dl class="device-stats">
+          <div><dt>Frames received</dt><dd id="received">0</dd></div>
+          <div><dt>Bus rate</dt><dd><span id="rate">0</span> <small>frames/s</small></dd></div>
+          <div><dt>IDs seen</dt><dd id="unique">0</dd></div>
+          <div><dt>Losses</dt><dd id="losses">0</dd></div>
+        </dl>
+        <form id="capture-form" class="device-controls">
+          <label>Bus speed
+            <select id="bitrate" name="bitrate">
+              <option value="125000">125 kbit/s</option>
+              <option value="250000">250 kbit/s</option>
+              <option value="500000" selected>500 kbit/s</option>
+              <option value="1000000">1 Mbit/s</option>
+            </select>
+          </label>
+          <label>Send from device
+            <select id="stream-mode">
+              <option value="changes">Latest per ID, 25×/s</option>
+              <option value="raw">Every frame</option>
+            </select>
+          </label>
+          <div class="buttons">
+            <button type="submit" id="apply" disabled>Start capture</button>
+            <button type="button" id="stop" class="quiet" disabled>Stop capture</button>
+          </div>
+        </form>
+        <p class="hint" id="device-detail">Connect to the reader to control capture.</p>
+      </div>
+
+      <div class="table-tools">
+        <label class="grow">Filter by ID
+          <input id="filter" type="search" placeholder="120, 12B, 540…" autocomplete="off" spellcheck="false">
+        </label>
+        <div class="buttons">
+          <button type="button" id="pause" class="quiet">Pause</button>
+          <button type="button" id="export" class="quiet" disabled>Export CSV</button>
+          <button type="button" id="clear" class="quiet">Clear</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="frames">
+          <thead><tr><th>ID</th><th>Data</th><th class="num">Count</th><th class="num">Every</th><th class="num">Age</th><th>Known as</th></tr></thead>
+          <tbody id="frames"></tbody>
+        </table>
+        <p id="frames-empty" class="empty">No frames yet. Connect the reader and switch the ignition on.</p>
+      </div>
+      <p class="hint" id="buffer-detail">Bytes that changed in the latest frame are marked. Exports hold up to 50,000 frames.</p>
+    </section>
+
+    <!-- FIND AN ID ---------------------------------------------------------->
+    <section id="view-find" class="view find" hidden aria-label="Find an unknown signal">
+      <div class="find-intro">
+        <h1>Find the bytes behind a control</h1>
+        <p>Record the bike sitting still, then record again while you work one control. The bytes that only move the second time are your signal. Engine running is fine; keep everything else the same between the two recordings.</p>
+      </div>
+
+      <ol class="steps">
+        <li class="step">
+          <h2>Choose what to find</h2>
+          <select id="hunt-target"></select>
+          <p class="hint" id="hunt-how"></p>
+        </li>
+        <li class="step">
+          <h2>Record still</h2>
+          <p class="hint">Hands off the controls for 5 seconds.</p>
+          <button type="button" id="hunt-baseline" disabled>Record still</button>
+          <span class="countdown" id="baseline-state"></span>
+        </li>
+        <li class="step">
+          <h2>Record with the control</h2>
+          <p class="hint" id="hunt-action-hint">Operate it for 8 seconds.</p>
+          <button type="button" id="hunt-action" disabled>Record with control</button>
+          <span class="countdown" id="action-state"></span>
+        </li>
+      </ol>
+
+      <div class="candidates" id="hunt-results-wrap" hidden>
+        <h2>Most likely bytes</h2>
+        <p class="hint">Watch a candidate live while you repeat the action. Save the one that follows your hand.</p>
+        <table class="frames">
+          <thead><tr><th>ID</th><th>Byte</th><th>Bits</th><th>What changed</th><th>Live</th><th></th></tr></thead>
+          <tbody id="hunt-results"></tbody>
+        </table>
+        <p id="hunt-none" class="empty" hidden>Nothing changed only during the action. Try "Every frame" on the Bus view, a longer action, or check the signal is on this bus at all.</p>
+      </div>
+    </section>
+
+    <!-- SIGNALS ------------------------------------------------------------->
+    <section id="view-signals" class="view signals" hidden aria-label="Signal definitions">
+      <div class="split">
+        <div>
+          <h1>Built-in KTM map</h1>
+          <p class="hint">Green badges were checked on your bike against the dash or your hands on the controls. Outlined ones are decoded from captures or from other KTMs, so check them as you ride. Your bike does not send 0x12B, so lean still needs a new ID.</p>
+        </div>
+        <div class="legend">
+          <span class="badge confirmed">Confirmed on your bike</span>
+          <span class="badge ktm">KTM family, check it</span>
+          <span class="badge capture">From your capture, check vs dash</span>
+          <span class="badge absent">ID not sent on your bike</span>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="map">
+          <thead><tr><th>Signal</th><th>ID</th><th>Where</th><th>Rule</th><th class="num">Live</th><th>Status</th></tr></thead>
+          <tbody id="ktm-map"></tbody>
+        </table>
+      </div>
+
+      <div class="calibration">
+        <div class="cal-block">
+          <h2>Speed</h2>
+          <p class="hint">Hold a steady speed (riding, or spinning the rear wheel on a stand), read the bike's speedometer, and enter it here. Uses the rear wheel.</p>
+          <form id="cal-speed" class="inline-form">
+            <label>Dash shows <input id="cal-speed-value" type="number" min="1" max="250" step="0.5" required> km/h</label>
+            <button type="submit">Calibrate speed</button>
+          </form>
+          <p class="hint" id="cal-speed-state"></p>
+        </div>
+        <div class="cal-block">
+          <h2>Lean</h2>
+          <p class="hint">Hold the bike upright and set zero. Then lean it against a known angle (a phone level works) and enter that angle.</p>
+          <div class="inline-form">
+            <button type="button" id="cal-lean-zero">Set upright as zero</button>
+          </div>
+          <form id="cal-lean" class="inline-form">
+            <label>Bike is at <input id="cal-lean-value" type="number" min="5" max="60" step="1" required>°</label>
+            <button type="submit">Calibrate lean</button>
+          </form>
+          <p class="hint" id="cal-lean-state"></p>
+        </div>
+        <div class="cal-block">
+          <h2>Front brake</h2>
+          <p class="hint">Press the button, then squeeze the lever as hard as you would in an emergency stop for 5 seconds. The hardest squeeze becomes 100 %.</p>
+          <div class="inline-form">
+            <button type="button" id="cal-brake">Set full squeeze</button>
+          </div>
+          <p class="hint" id="cal-brake-state"></p>
+        </div>
+        <div class="cal-block">
+          <h2>Rear brake</h2>
+          <p class="hint">Release both brakes for a moment so the resting level is learned. Then press the button and push the pedal as hard as in an emergency stop for 5 seconds.</p>
+          <div class="inline-form">
+            <button type="button" id="cal-rear">Set full press</button>
+          </div>
+          <p class="hint" id="cal-rear-state"></p>
+        </div>
+        <div class="cal-block">
+          <h2>Fuel</h2>
+          <p class="hint">Fill the tank to the brim and reset Trip 2. Ride with the dashboard connected the whole time. At the next brim fill-up, enter what the pump shows.</p>
+          <form id="cal-fuel" class="inline-form">
+            <label>Pump shows <input id="cal-fuel-value" type="number" min="0.5" max="20" step="0.01" required> L</label>
+            <button type="submit">Calibrate fuel</button>
+          </form>
+          <form id="cal-tank" class="inline-form">
+            <label>Tank holds <input id="cal-tank-value" type="number" min="5" max="30" step="0.1" required> L</label>
+            <button type="submit" class="quiet">Save tank size</button>
+          </form>
+          <p class="hint" id="cal-fuel-state"></p>
+        </div>
+        <div class="cal-block">
+          <h2>Shift light</h2>
+          <p class="hint">Two stages, like the KTM: an orange frame as you near the shift point, then the whole screen turns orange when it is time to shift. Works in every ride mode.</p>
+          <form id="shift-form" class="shift-form">
+            <label class="check"><input type="checkbox" id="shift-on"> Shift light on</label>
+            <label>Stage 1, orange frame from <input id="shift-1" type="number" min="3000" max="12000" step="100" required> rpm</label>
+            <label>Stage 2, full orange screen from <input id="shift-2" type="number" min="3000" max="12000" step="100" required> rpm</label>
+            <div class="buttons">
+              <button type="submit">Save shift light</button>
+              <button type="button" id="shift-test" class="quiet">Test on the cluster</button>
+            </div>
+          </form>
+          <p class="hint" id="shift-state"></p>
+        </div>
+        <div class="cal-block">
+          <h2>Cluster themes</h2>
+          <p class="hint">Pick a colour for each ride mode. The cluster changes colour when you change mode on the bike.</p>
+          <div id="palette-picker" class="palette-picker"></div>
+          <div class="buttons"><button type="button" id="palette-default" class="quiet">Use the default colours</button></div>
+        </div>
+      </div>
+
+      <div class="split">
+        <div>
+          <h1>Your signals</h1>
+          <p class="hint">Signals you found with "Find an ID" or entered by hand. Stored in this browser.</p>
+        </div>
+        <button type="button" id="add-signal">Add signal</button>
+      </div>
+      <div id="signals" class="signal-grid"></div>
+      <p id="signals-empty" class="empty">No signals saved yet.</p>
+    </section>
+  </main>
+
+  <!-- Bezel keys under the screen. -->
+  <nav class="keys" aria-label="Pages">
+    <span class="keys-mark" aria-hidden="true" translate="no">ADV390</span>
+    <button type="button" class="view-btn" data-view="ride" aria-current="page"><svg class="i" aria-hidden="true"><use href="#i-speedometer"/></svg><span>Ride</span></button>
+    <button type="button" class="view-btn" data-view="bus"><svg class="i" aria-hidden="true"><use href="#i-broadcast"/></svg><span>Bus</span></button>
+    <button type="button" class="view-btn" data-view="find"><svg class="i" aria-hidden="true"><use href="#i-magnifying-glass"/></svg><span>Find<span class="wide"> an ID</span></span></button>
+    <button type="button" class="view-btn" data-view="signals"><svg class="i" aria-hidden="true"><use href="#i-sliders-horizontal"/></svg><span>Signals</span></button>
+    <span class="keys-gap"></span>
+    <button type="button" id="connect" class="key primary"><svg class="i" aria-hidden="true"><use href="#i-bluetooth"/></svg><span id="connect-text">Connect</span></button>
+  </nav>
+
+  <dialog id="tiles-dialog">
+    <form id="tiles-form" method="dialog">
+      <h2>Ride screen tiles</h2>
+      <p class="hint">Choose what each tile shows, in order. Up to 8 tiles. Tap a trip or fuel tile while riding to open the trip details.</p>
+      <ol class="tile-slots" id="tile-slots"></ol>
+      <div class="buttons">
+        <button type="button" id="tiles-add" class="quiet"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg>Add a tile</button>
+        <button type="button" id="tiles-default" class="quiet"><svg class="i" aria-hidden="true"><use href="#i-arrow-counter-clockwise"/></svg>Use the default tiles</button>
+        <span class="keys-gap"></span>
+        <button type="submit">Done</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="signal-dialog">
+    <form id="signal-form" method="dialog">
+      <h2>Save a signal</h2>
+      <label>Name <input id="signal-name" name="name" required maxlength="40" placeholder="Left indicator…" autocomplete="off"></label>
+      <div class="form-grid">
+        <label>CAN ID (hex) <input id="signal-id" name="id" required pattern="(0[xX])?[0-9a-fA-F]{1,8}" placeholder="2A0…" autocomplete="off" spellcheck="false"></label>
+        <label>Frame format
+          <select id="signal-format" name="extended">
+            <option value="false">Standard, 11-bit</option>
+            <option value="true">Extended, 29-bit</option>
+          </select>
+        </label>
+        <label>First byte (0-7) <input id="signal-start" name="start" type="number" min="0" max="7" value="0" required></label>
+        <label>Length in bytes <input id="signal-length" name="length" type="number" min="1" max="4" value="1" required></label>
+        <label>Bit mask (optional) <input id="signal-mask" name="mask" pattern="(0[xX])?[0-9a-fA-F]{1,2}" placeholder="0x02…" autocomplete="off" spellcheck="false"></label>
+        <label>Byte order
+          <select id="signal-endian" name="endian">
+            <option value="big">Big-endian</option>
+            <option value="little">Little-endian</option>
+          </select>
+        </label>
+        <label>Number type
+          <select id="signal-signed" name="signed">
+            <option value="false">Unsigned</option>
+            <option value="true">Signed</option>
+          </select>
+        </label>
+        <label>Unit <input id="signal-unit" name="unit" maxlength="16" placeholder="°C, %, on/off…" autocomplete="off"></label>
+        <label>Scale <input id="signal-scale" name="scale" type="number" step="any" value="1" required></label>
+        <label>Offset <input id="signal-offset" name="offset" type="number" step="any" value="0" required></label>
+      </div>
+      <p class="hint">Value = raw × scale + offset. With a bit mask, raw is the masked bits shifted down, so a single bit reads 0 or 1.</p>
+      <p id="signal-error" class="error" role="alert"></p>
+      <div class="buttons">
+        <button type="button" id="close-dialog" class="quiet">Cancel</button>
+        <button type="submit" id="save-signal">Save signal</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>

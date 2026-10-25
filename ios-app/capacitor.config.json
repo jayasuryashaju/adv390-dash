@@ -1,0 +1,12 @@
+{
+  "appId": "com.jayasurya.adv390dash",
+  "appName": "ADV390 Dash",
+  "webDir": "www",
+  "backgroundColor": "#121716",
+  "ios": { "contentInset": "never", "preferredContentMode": "mobile" },
+  "plugins": {
+    "BluetoothLe": {
+      "displayStrings": { "scanning": "Looking for ADV390-CAN...", "cancel": "Cancel", "availableDevices": "Readers nearby", "noDeviceFound": "No reader found" }
+    }
+  }
+}

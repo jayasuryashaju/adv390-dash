@@ -1,0 +1,10 @@
+.pio/
+.venv/
+__pycache__/
+artifacts/
+preview*.log
+_backup_wifi_version/
+captures/
+*.log
+node_modules/
+compile_commands.json
