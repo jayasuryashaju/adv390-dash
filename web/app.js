@@ -6,7 +6,7 @@ const demo = new URLSearchParams(location.search).has('demo');
 
 // Demo data must never touch the real bike's trips, calibration or saved signals.
 const scope = demo ? '-demo' : '';
-const keys = { signals: `adv390-signals-v1${scope}`, calibration: `adv390-calibration-v1${scope}`, theme: 'adv390-theme', tiles: 'adv390-tiles-v1', shift: 'adv390-shift-v1', palette: 'adv390-palette-v1', trips: `adv390-trips-v1${scope}` };
+const keys = { signals: `adv390-signals-v1${scope}`, calibration: `adv390-calibration-v1${scope}`, theme: 'adv390-theme', tiles: 'adv390-tiles-v1', shift: 'adv390-shift-v1', palette: 'adv390-palette-v1', hideKnown: 'adv390-hide-known-v1', trips: `adv390-trips-v1${scope}` };
 const load = (key, fallback) => { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } };
 const save = (key, value) => { try { localStorage.setItem(key, JSON.stringify(value)); } catch { notice('Browser storage is unavailable; settings last until you close this page.'); } };
 
@@ -704,7 +704,10 @@ function cell(text, className) {
 function renderBus() {
   const now = deviceNow();
   const filter = $('filter').value.trim().replace(/^0x/i, '').toUpperCase();
+  const onlyUnknown = $('hide-known').checked;
+  let hidden = 0;
   const list = [...rows().entries()].filter(([, r]) => hex(r.frame.id, r.frame.extended ? 8 : 3).includes(filter))
+    .filter(([key]) => { const known = !!labelsFor(key); if (onlyUnknown && known) hidden++; return !(onlyUnknown && known); })
     .sort(([, a], [, b]) => a.frame.extended - b.frame.extended || a.frame.id - b.frame.id);
   const body = document.createDocumentFragment();
   for (const [key, r] of list) {
@@ -726,8 +729,9 @@ function renderBus() {
     body.append(tr);
   }
   $('frames').replaceChildren(body);
+  $('hidden-count').textContent = onlyUnknown && hidden ? `(${hidden} known hidden)` : '';
   $('frames-empty').hidden = list.length > 0;
-  $('frames-empty').textContent = store.rows.size ? 'No IDs match the filter.' : 'No frames yet. Connect the reader and switch the ignition on.';
+  $('frames-empty').textContent = store.rows.size ? (onlyUnknown && hidden ? 'Every ID seen so far is already known. Change something on the bike.' : 'No IDs match the filter.') : 'No frames yet. Connect the reader and switch the ignition on.';
   $('received').textContent = (status?.received ?? 0).toLocaleString();
   $('rate').textContent = rate.toLocaleString();
   $('unique').textContent = store.rows.size;
@@ -1042,6 +1046,8 @@ $('pause').addEventListener('click', () => {
   frozenRows = paused ? new Map(store.rows) : null;
   $('pause').textContent = paused ? 'Resume' : 'Pause';
 });
+$('hide-known').checked = load(keys.hideKnown, true);
+$('hide-known').addEventListener('change', () => { save(keys.hideKnown, $('hide-known').checked); renderBus(); });
 $('clear').addEventListener('click', () => { store.clear(); frozenRows = paused ? new Map() : null; });
 $('export').addEventListener('click', () => {
   const url = URL.createObjectURL(new Blob([toCsv(store.frames())], { type: 'text/csv;charset=utf-8' }));

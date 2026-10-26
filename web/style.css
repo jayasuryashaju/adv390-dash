@@ -616,3 +616,6 @@ dialog form { display: grid; gap: .9rem; }
   .link-icon { animation: none !important; }
   button { transition: none; }
 }
+
+.table-tools .check { display: flex; align-items: center; gap: 8px; font-size: 14px; white-space: nowrap; }
+.table-tools .check input { width: 22px; min-height: 22px; accent-color: var(--accent); }

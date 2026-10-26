@@ -8,3 +8,4 @@ captures/
 *.log
 node_modules/
 compile_commands.json
+dist/
