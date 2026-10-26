@@ -76,6 +76,8 @@ test('CSV includes frames represented per record', () => {
 // Vectors from blalor/ktm-can tests (2020 KTM 690 Enduro R).
 test('KTM map: 0x540 rpm (690 vector); side stand D3 bit 0x01 and coolant D5–D6 (390 captures)', () => {
   assert.equal(decodeKtm(rowsOf(frame(0x540, '00,00,00,01,89,03,C2,00'))).coolant, 96.2);
+  assert.equal(decodeKtm(rowsOf(frame(0x541, '04,00,08,00,3b,03,be,95'))).quickshifter, true);   // owner capture 2026-10-26
+  assert.equal(decodeKtm(rowsOf(frame(0x541, '00,00,08,00,3b,03,be,95'))).quickshifter, false);
   assert.equal(decodeKtm(rowsOf(frame(0x540, '00,00,00,11,00,02,25,00'))).standUp, true);   // stand up
   assert.equal(decodeKtm(rowsOf(frame(0x540, '00,00,00,10,00,02,25,00'))).standUp, false);  // stand down
 });

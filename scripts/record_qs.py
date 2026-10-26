@@ -36,7 +36,15 @@ async def main():
     async with BleakClient(dev) as c:
         t0 = time.monotonic()
         await c.start_notify(FRAMES, on_packet)
-        await c.write_gatt_char(CONTROL, bytes([1, 0x20, 0xA1, 0x07, 0x00]), response=True)  # start capture, 500 kbit/s
+        STATUS = '4b544d39-0002-4a10-8c00-ca0000000001'
+        running = b'"running":true' in bytes(await c.read_gatt_char(STATUS)).replace(b' ', b'')
+        for attempt in range(4):
+            if running: break
+            try: await c.write_gatt_char(CONTROL, bytes([1, 0x20, 0xA1, 0x07, 0x00]), response=False); running = True  # start, 500 kbit/s
+            except Exception as e: print('start command retry:', e); await asyncio.sleep(1)
+        try: await c.write_gatt_char(CONTROL, bytes([3, 0]), response=False)  # 'latest per ID' mode: no packet loss on state bytes
+        except Exception as e: print('mode command skipped:', e)
+        await asyncio.sleep(0.5)
         print(f'Connected. Ignition ON, bike still. Recording {BASE} s baseline: DO NOT TOUCH ANYTHING.')
         beep(800, 500); await asyncio.sleep(BASE)
         marks = [BASE]

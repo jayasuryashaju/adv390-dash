@@ -430,6 +430,11 @@ function renderLamps(tel) {
   lamp('lamp-kill', live && tel.killRun === false);
   lamp('lamp-temp', live && tel.coolant >= COOL_HOT);
   lamp('lamp-tc', live && tel.traction === 'Off');
+  const qs = $('lamp-qs');
+  lamp('lamp-qs', live && tel.quickshifter !== undefined);
+  qs.classList.toggle('amber', tel.quickshifter === false); qs.classList.toggle('green', tel.quickshifter !== false);
+  qs.lastElementChild.textContent = tel.quickshifter === false ? 'QS off' : 'QS on';
+  qs.title = tel.quickshifter === false ? 'Quickshifter off' : 'Quickshifter on';
   lamp('lamp-abs', live && tel.absMode === 'Offroad');
   lamp('lamp-clutch', live && tel.clutch);
   lamp('lamp-brake', live && tel.brakeLight);

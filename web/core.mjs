@@ -177,6 +177,7 @@ export const KTM_MAP = [
   { key: 'rearBrake', label: 'Rear brake', id: 0x12f, where: 'D0-D1', rule: 'Rises above its resting level with the pedal (on at +28, off below +12)', source: 'capture' },
   { key: 'rearBrakePct', label: 'Rear brake (of full press)', id: 0x12f, where: 'D0-D1', rule: 'Rise ÷ calibrated maximum; steps of 16', source: 'capture' },
   { key: 'tcButton', label: 'Traction control button', id: 0x450, where: 'D2 bit 0x01', rule: '1 = pressed', source: 'ktm' },
+  { key: 'quickshifter', label: 'Quickshifter on/off', id: 0x541, where: 'D0 bit 0x04', rule: '1 = on (polarity to confirm)', source: 'capture' },
   { key: 'standUp', label: 'Side stand', id: 0x540, where: 'D3 bit 0x01', rule: '1 = up, 0 = down (690: D4)', source: 'confirmed' },
   { key: 'coolant', label: 'Coolant temperature', id: 0x540, where: 'D5-D6', rule: 'Big-endian ÷ 10, °C (690: D6-D7)', source: 'capture' },
   { key: 'odometer', label: 'Odometer', id: 0x55a, where: 'D0-D2', rule: 'Big-endian ÷ 10, km (1 Hz)', source: 'confirmed' },
@@ -198,7 +199,7 @@ export function decodeKtm(rows, calibration = DEFAULT_CALIBRATION, nowUs = null,
     return f && f.data.length === 8 && (nowUs === null || nowUs - f.us <= staleUs) ? f.data : null;
   };
   const d120 = frame(0x120), d129 = frame(0x129), d12a = frame(0x12a), d12b = frame(0x12b), d12d = frame(0x12d), d12e = frame(0x12e);
-  const d128 = frame(0x128), d290 = frame(0x290), d450 = frame(0x450), d540 = frame(0x540), d55a = frame(0x55a);
+  const d128 = frame(0x128), d290 = frame(0x290), d450 = frame(0x450), d540 = frame(0x540), d541 = frame(0x541), d55a = frame(0x55a);
   if (d120) {
     out.rpm = be16(d120, 0);
     out.throttle = Math.min(100, Math.round(d120[2] / 253 * 100)); // owner capture: 0 closed, 253 fully open
@@ -241,6 +242,7 @@ export function decodeKtm(rows, calibration = DEFAULT_CALIBRATION, nowUs = null,
     out.absMode = { 1: 'Road', 2: 'Offroad' }[d450[3]] ?? `Mode ${d450[3]}`; // owner capture: 01 <-> 02
   }
   if (d55a) out.odometer = ((d55a[0] << 16) | (d55a[1] << 8) | d55a[2]) / 10; // 21430 = dash 2,143 km
+  if (d541) out.quickshifter = (d541[0] & 0x04) !== 0; // owner capture 2026-10-26: bit flipped with the dash menu setting (polarity to confirm)
   if (d540) {
     out.standUp = (d540[3] & 0x01) !== 0; // 390: D3 bit 0x01 set = stand up (owner-checked)
     out.coolant = be16(d540, 5) / 10; // 390 Adventure: one byte earlier than the 690
@@ -422,6 +424,7 @@ export function demoFrames(sim, timeUs) {
     f(0x12f, [rearPress >> 8, rearPress & 0xff, 0, 0x20, 0, 0, 0, tick]),
     f(0x450, [0, 0x3e, 0x80 | (sim.tcButton ? 1 : 0), sim.map === 1 ? 0x02 : 0x01, 0x08, 0, 0x59, 0]),
     f(0x128, [0x13, 0x88, sim.throttle > 0 ? 0x02 : 0x03, 0, 0, 0, 0, 0x37 + tick * 0x20]),
+    f(0x541, [sim.quickshifter === false ? 0x00 : 0x04, 0, 0x08, 0, 0x3b, 0x03, 0xbe, 0]),
     f(0x540, [0x00, fuel & 0xff, fuel >> 8, sim.standUp ? 0x11 : 0x10, 0, coolant >> 8, coolant & 0xff, 0]),
     f(0x2a0, [0x40, (sim.indicatorLeft ? 0x01 : 0) | (sim.indicatorRight ? 0x02 : 0), 0, sim.highBeam ? 0x80 : 0, 0, 0, 0, tick]),
     f(0x3c1, [0x17, 0x5e, sim.fuel, 0, 0x0c, 0x80, 0, 0]),
