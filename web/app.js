@@ -297,7 +297,13 @@ const clamp01 = x => Math.max(0, Math.min(1, x));
 // last brim fill-up (the fuel calibration asks the rider to reset Trip 2 there).
 const FUEL_LOW = 0.15;
 const tankL = () => calibration.tankL ?? DEFAULT_CALIBRATION.tankL;
-const fuelLeft = () => Math.max(0, tankL() - trips[1].fuelL);
+// From a brim fill-up (tank size minus Trip 2's fuel), or from "Fuel left now": the litres the rider said were in the tank
+// at that moment minus what has been used since. A Trip 2 reset (a new brim fill-up) goes back to the tank-size count.
+const fuelLeft = () => {
+  const base = calibration.fuelBase;
+  if (base && trips[1].fuelL >= base.used) return Math.max(0, base.left - (trips[1].fuelL - base.used));
+  return Math.max(0, tankL() - trips[1].fuelL);
+};
 // Range from fuel left and the measured economy (Trip 2 first, it spans the tank; else Trip 1).
 const rangeKm = () => { const eco = trips[1].stats().economy ?? trips[0].stats().economy; return eco ? fuelLeft() * eco : null; };
 
@@ -1152,6 +1158,13 @@ $('shift-test').addEventListener('click', () => {
   shiftTestUntil = performance.now() + SHIFT_TEST_MS;
   setView('ride');
 });
+$('cal-fuel-now').addEventListener('submit', e => {
+  e.preventDefault();
+  const left = Number($('cal-fuel-now-value').value);
+  calibration = { ...calibration, fuelBase: { left: Math.min(left, tankL()), used: trips[1].fuelL } };
+  save(keys.calibration, calibration);
+  notice(`Fuel left set to ${calibration.fuelBase.left} L. It counts down from here from the fuel the bike burns, until you fill the tank to the brim and reset Trip 2.`);
+});
 $('cal-tank').addEventListener('submit', e => {
   e.preventDefault();
   calibration = { ...calibration, tankL: Number($('cal-tank-value').value) };
@@ -1167,6 +1180,8 @@ $('cal-fuel').addEventListener('submit', e => {
   save(keys.calibration, calibration);
   trips[1].fuelL = litres;
   trips[1].reset();
+  calibration = { ...calibration, fuelBase: undefined };
+  save(keys.calibration, calibration);
   save(keys.trips, trips);
   notice(`Fuel calibrated: the dashboard had counted ${measured.toFixed(2)} L, the pump says ${litres} L. Trip 2 has been reset for the next tank.`);
 });
