@@ -230,14 +230,17 @@ const handlers = {
 };
 
 const nativeApp = !!window.NativeBle;
+const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 const transport = demo ? new DemoTransport(handlers) : nativeApp ? new NativeBleTransport(handlers) : new BleTransport(handlers);
 
 async function toggleConnection() {
   if (link !== 'idle') { transport.disconnect(); return; }
   if (!demo && !nativeApp && !navigator.bluetooth) {
-    notice(window.isSecureContext
-      ? 'This browser has no Bluetooth access. Use Chrome or Edge on Android, Windows, macOS or Linux. On iPhone, use the Bluefy browser.'
-      : 'Bluetooth only works on https:// or localhost pages. Open the dashboard from its https address.');
+    notice(!window.isSecureContext
+      ? 'Bluetooth only works on https:// or localhost pages. Open the dashboard from its https address.'
+      : isIOS
+        ? 'iOS blocks Web Bluetooth in every browser — Safari, Chrome and Edge included. That is an Apple restriction, not a setting here. Install the free Bluefy browser from the App Store and open this page there to connect.'
+        : 'This browser has no Bluetooth access. Use Chrome or Edge on Android, Windows, macOS or Linux.');
     return;
   }
   try {
@@ -1233,5 +1236,32 @@ buildMap();
 fillTargets();
 handlers.state('idle');
 if (!window.NativeBle && 'serviceWorker' in navigator && window.isSecureContext) navigator.serviceWorker.register('sw.js').catch(() => {});
+
+// ===========================================================================
+// Install prompt: native beforeinstallprompt on Chrome/Edge/Android, a
+// Share-sheet walkthrough on iOS (which never fires that event).
+// ===========================================================================
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+let deferredInstall = null;
+if (!nativeApp && !isStandalone) {
+  if (isIOS) $('install-btn').hidden = false;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredInstall = e;
+    $('install-btn').hidden = false;
+  });
+  window.addEventListener('appinstalled', () => { $('install-btn').hidden = true; deferredInstall = null; });
+  $('install-btn').addEventListener('click', async () => {
+    if (deferredInstall) {
+      $('install-btn').hidden = true;
+      const prompted = deferredInstall;
+      deferredInstall = null;
+      await prompted.prompt();
+    } else {
+      $('install-dialog').showModal();
+    }
+  });
+}
+
 if (VIEWS.includes(location.hash.slice(1))) setView(location.hash.slice(1));
 requestAnimationFrame(loop);
