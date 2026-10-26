@@ -149,7 +149,7 @@ def selftest():
     random.seed(1)
     log = []
     sched = schedule()
-    for step in range(int(66 * 25)):
+    for step in range(int(sched[-1][2] * 25) - 1):
         t = step / 25
         phase = next(n for n, a, b, _ in sched if a <= t < b)
         lean = {'upright': 0, 'left': -25, 'right': 25}[phase] * 10 + random.randint(-3, 3)  # tenths of a degree
