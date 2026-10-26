@@ -170,12 +170,11 @@ export const KTM_MAP = [
   { key: 'speedFilteredRaw', label: 'Vehicle speed, smoothed (raw)', id: 0x12e, where: 'D1-D2', rule: '≈ 0.7 × 0x12D, fades out after the wheel stops', source: 'capture' },
   { key: 'frontWheel', label: 'Front wheel speed (690 layout)', id: 0x12b, where: 'D0-D1', rule: 'Raw × speed calibration', source: 'absent' },
   { key: 'tilt', label: 'Pitch / tilt', id: 0x12b, where: 'D5 + D6 high nibble', rule: 'Signed 12-bit', source: 'absent' },
-  { key: 'lean', label: 'Lean angle', id: 0x12b, where: 'D6 low nibble + D7', rule: 'Signed 12-bit × lean calibration', source: 'absent' },
+  { key: 'lean', label: 'Lean angle', id: 0x12f, where: 'D0-D1, top 12 bits', rule: 'Signed 12-bit, right positive, minus upright zero × lean calibration (0x12B layout of the 690 is absent here)', source: 'capture' },
   { key: 'frontBrake', label: 'Front brake pressure', id: 0x290, where: 'D0-D1', rule: 'Raw, unit unknown; rest noise ≤ 48, full squeeze ≈ 23,000', source: 'confirmed' },
   { key: 'frontBrakePct', label: 'Front brake (of full squeeze)', id: 0x290, where: 'D0-D1', rule: 'Below 128 = 0; raw ÷ calibrated maximum', source: 'confirmed' },
   { key: 'brakeLight', label: 'Brake light (either brake)', id: 0x290, where: 'D3 bits 0x0C', rule: '02 off, 0E on; front or rear', source: 'confirmed' },
-  { key: 'rearBrake', label: 'Rear brake', id: 0x12f, where: 'D0-D1', rule: 'Rises above its resting level with the pedal (on at +28, off below +12)', source: 'capture' },
-  { key: 'rearBrakePct', label: 'Rear brake (of full press)', id: 0x12f, where: 'D0-D1', rule: 'Rise ÷ calibrated maximum; steps of 16', source: 'capture' },
+  { key: 'rearBrake', label: 'Rear brake', id: 0x290, where: 'D3 bits 0x0C', rule: 'Brake light on with no front pressure = rear only. Both together cannot be told apart', source: 'capture' },
   { key: 'tcButton', label: 'Traction control button', id: 0x450, where: 'D2 bit 0x01', rule: '1 = pressed', source: 'ktm' },
   { key: 'quickshifter', label: 'Quickshifter on/off', id: 0x541, where: 'D0 bit 0x04', rule: '1 = on, 0 = off (owner-checked with the dash menu)', source: 'confirmed' },
   { key: 'standUp', label: 'Side stand', id: 0x540, where: 'D3 bit 0x01', rule: '1 = up, 0 = down (690: D4)', source: 'confirmed' },
@@ -188,7 +187,7 @@ export const KTM_MAP = [
 // 0x120 D4 on the 390 (owner capture): the ride mode number. Names follow KTM's menu order; confirm on the dash.
 export const RIDE_MODES = { 0: 'Street', 1: 'Offroad', 2: 'Rain' };
 // fuelScale: L/h per raw step of 0x540 D1. 0.018 puts a 390 idle (raw ~21) at ~0.38 L/h: a guess until a fill-up calibrates it.
-export const DEFAULT_CALIBRATION = { speedScale: 0.1, speedCalibrated: false, leanScale: 0.1, leanZero: 0, leanCalibrated: false, brakeMax: 17500, rearMax: 48, fuelScale: 0.018, fuelCalibrated: false, tankL: 14.5 }; // brakeMax: the owner's firm stop, raw 15-20k
+export const DEFAULT_CALIBRATION = { speedScale: 0.1, speedCalibrated: false, leanScale: 0.1, leanZero: 0, leanCalibrated: false, brakeMax: 17500, fuelScale: 0.018, fuelCalibrated: false, tankL: 14.5 }; // brakeMax: the owner's firm stop, raw 15-20k
 export const BRAKE_NOISE_FLOOR = 128; // At rest D1 wanders 0x00-0x30 on the owner's bike.
 
 // nowUs: device time used to drop values older than staleUs; null skips the age check.
@@ -199,7 +198,7 @@ export function decodeKtm(rows, calibration = DEFAULT_CALIBRATION, nowUs = null,
     return f && f.data.length === 8 && (nowUs === null || nowUs - f.us <= staleUs) ? f.data : null;
   };
   const d120 = frame(0x120), d129 = frame(0x129), d12a = frame(0x12a), d12b = frame(0x12b), d12d = frame(0x12d), d12e = frame(0x12e);
-  const d128 = frame(0x128), d290 = frame(0x290), d450 = frame(0x450), d540 = frame(0x540), d541 = frame(0x541), d55a = frame(0x55a);
+  const d128 = frame(0x128), d290 = frame(0x290), d450 = frame(0x450), d540 = frame(0x540), d541 = frame(0x541), d12f = frame(0x12f), d55a = frame(0x55a);
   if (d120) {
     out.rpm = be16(d120, 0);
     out.throttle = Math.min(100, Math.round(d120[2] / 253 * 100)); // owner capture: 0 closed, 253 fully open
@@ -231,6 +230,10 @@ export function decodeKtm(rows, calibration = DEFAULT_CALIBRATION, nowUs = null,
     out.leanRaw = signed12(((d12b[6] & 0x0f) << 8) | d12b[7]);
     out.lean = (out.leanRaw - calibration.leanZero) * calibration.leanScale;
   }
+  if (d12f) { // owner capture 2026-10-26, bike tilted by hand on the side stand: negative left, positive right, holds while held
+    out.leanRaw = signed12(((d12f[0] << 8) | d12f[1]) >> 4);
+    out.lean = (out.leanRaw - calibration.leanZero) * calibration.leanScale;
+  }
   if (d290) {
     out.frontBrake = be16(d290, 0);
     const max = calibration.brakeMax || DEFAULT_CALIBRATION.brakeMax;
@@ -255,14 +258,6 @@ export function decodeKtm(rows, calibration = DEFAULT_CALIBRATION, nowUs = null,
   return out;
 }
 
-// 0x12F D0-D1 rises with rear brake pressure and ignores the front lever (owner captures 2026-10-25):
-// rest ~304 (~220 in an earlier session), the owner's firmest press about +48, in steps of 16. The
-// resting level drifts, so it is learned whenever the brake light is off. The raw value is smoothed
-// and switched with hysteresis so a medium press does not flicker between steps. A light, quick
-// pedal press can stay under the threshold, so with no front pressure the light alone means rear.
-// Thresholds from the owner's capture: front-only noise peaks at +22, a firm rear press with the
-// front held stays above +38.
-export const REAR_RISE_ON = 28, REAR_RISE_OFF = 12;
 // A trip: distance from the odometer (exact even across gaps), fuel integrated from 0x540 while frames
 // arrive. Economy uses only the kilometres covered while fuel was being measured.
 const odometerOf = d => ((d[0] << 16) | (d[1] << 8) | d[2]) / 10;
@@ -306,30 +301,20 @@ export class Trip {
 }
 
 export class RearBrake {
+  // 0x12F carries the lean angle, so the pedal is read from the brake light alone: light on and no front pressure.
   constructor() { this.reset(); }
-  reset() { this.rest = null; this.raw = undefined; this.light = undefined; this.front = 0; this.on = false; }
+  reset() { this.light = undefined; this.front = 0; this.on = false; }
   observe(frames) {
     for (const f of frames) {
-      if (f.extended || f.remote || f.data.length !== 8) continue;
-      if (f.id === 0x290) { this.light = (f.data[3] & 0x0c) !== 0; this.front = be16(f.data, 0); }
-      else if (f.id === 0x12f) {
-        const raw = be16(f.data, 0);
-        this.raw = this.raw === undefined ? raw : this.raw + (raw - this.raw) * 0.2;
-        if (this.light === false) this.rest = this.rest === null ? this.raw : this.rest + (this.raw - this.rest) * 0.05;
-        this.update();
-      }
+      if (f.id !== 0x290 || f.extended || f.remote || f.data.length !== 8) continue;
+      this.light = (f.data[3] & 0x0c) !== 0;
+      this.front = be16(f.data, 0);
+      this.on = this.light && this.front < BRAKE_NOISE_FLOOR;
     }
   }
-  update() {
-    const rise = this.rest === null ? 0 : Math.max(0, this.raw - this.rest);
-    if (this.light !== true) this.on = false;
-    else if (this.front < BRAKE_NOISE_FLOOR || rise >= REAR_RISE_ON) this.on = true;
-    else if (rise < REAR_RISE_OFF) this.on = false;
-  }
-  read(max = DEFAULT_CALIBRATION.rearMax) {
-    if (this.raw === undefined || this.rest === null) return {};
-    const rise = Math.max(0, this.raw - this.rest);
-    return { rearRise: Math.round(rise), rearBrake: this.on, rearBrakePct: this.on ? Math.min(100, Math.round(rise / max * 100)) : 0 };
+  read() {
+    if (this.light === undefined) return {};
+    return { rearBrake: this.on, rearBrakePct: this.on ? 100 : 0 };
   }
 }
 
@@ -410,7 +395,7 @@ export function demoFrames(sim, timeUs) {
   const tilt = Math.round(sim.tilt) & 0xfff;
   const coolant = Math.round(sim.coolant * 10);
   const tick = Math.floor(timeUs / 20000) % 6;
-  const rearPress = 304 + (sim.rearBrake ? 80 : 0);
+  const lean12f = (Math.round(sim.lean / DEFAULT_CALIBRATION.leanScale) << 4) & 0xffff;
   const fuel = sim.rpm > 0 ? Math.round(14 + sim.rpm / 1000 * 3 + sim.throttle * 0.4) : 0;
   const odo = Math.round((sim.odo ?? 2143) * 10);
   return [
@@ -421,7 +406,7 @@ export function demoFrames(sim, timeUs) {
     f(0x12e, [0, (rear * 0.7) >> 8, Math.round(rear * 0.7) & 0xff, 0, 0, 0, 0xc0, 0x2e + tick * 0x20]),
     f(0x12b, [front >> 8, front & 0xff, rear >> 8, rear & 0xff, 0, tilt >> 4, ((tilt & 0x0f) << 4) | (lean >> 8), lean & 0xff]),
     f(0x290, [sim.brake >> 8, sim.brake & 0xff, 0, sim.brake > 1000 || sim.rearBrake ? 0x0e : 0x02, 0, 0, 0, 0]),
-    f(0x12f, [rearPress >> 8, rearPress & 0xff, 0, 0x20, 0, 0, 0, tick]),
+    f(0x12f, [lean12f >> 8, lean12f & 0xff, 0, 0x20, 0, 0, 0, tick]),
     f(0x450, [0, 0x3e, 0x80 | (sim.tcButton ? 1 : 0), sim.map === 1 ? 0x02 : 0x01, 0x08, 0, 0x59, 0]),
     f(0x128, [0x13, 0x88, sim.throttle > 0 ? 0x02 : 0x03, 0, 0, 0, 0, 0x37 + tick * 0x20]),
     f(0x541, [sim.quickshifter === false ? 0x00 : 0x04, 0, 0x08, 0, 0x3b, 0x03, 0xbe, 0]),

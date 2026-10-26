@@ -125,37 +125,22 @@ test('brake light is either brake (0x290 D3)', () => {
   assert.equal(decodeKtm(rowsOf(frame(0x290, '2C,EC,00,0E,00,00,00,DC'))).brakeLight, true);
 });
 
-test('rear brake from 0x12F rise: off for front only, on for rear or both (owner capture)', () => {
+test('rear brake: brake light on with no front pressure is rear only', () => {
   const rear = new RearBrake();
-  const light = on => frame(0x290, on ? '1F,40,00,0E,00,00,00,00' : '00,10,00,02,00,00,00,00');
-  const r12f = v => frame(0x12f, `${(v >> 8).toString(16)},${(v & 0xff).toString(16)},00,20,00,00,00,00`);
-  for (let i = 0; i < 50; i++) rear.observe([light(false), r12f(296)]);
-  assert.deepEqual(rear.read(48), { rearRise: 0, rearBrake: false, rearBrakePct: 0 });   // released
-  for (let i = 0; i < 20; i++) rear.observe([light(true), r12f(304)]);
-  assert.equal(rear.read(48).rearBrake, false);                                          // front only
-  for (let i = 0; i < 40; i++) rear.observe([light(true), r12f(344)]);
-  assert.deepEqual(rear.read(48), { rearRise: 48, rearBrake: true, rearBrakePct: 100 }); // both, firm rear
-  for (let i = 0; i < 10; i++) rear.observe([light(false), r12f(296)]);
-  assert.equal(rear.read(48).rearBrake, false);
-  rear.observe([frame(0x290, '00,10,00,0E,00,00,00,00'), r12f(296)]);                  // light rear tap, no front
-  assert.equal(rear.read(48).rearBrake, true);
+  rear.observe([frame(0x290, '00,10,00,02,00,00,00,00')]);
+  assert.deepEqual(rear.read(), { rearBrake: false, rearBrakePct: 0 });   // released
+  rear.observe([frame(0x290, '1F,40,00,0E,00,00,00,00')]);
+  assert.equal(rear.read().rearBrake, false);                              // front lever held (rear cannot be told)
+  rear.observe([frame(0x290, '00,10,00,0E,00,00,00,00')]);
+  assert.deepEqual(rear.read(), { rearBrake: true, rearBrakePct: 100 });  // light on, only noise on the front sensor
 });
 
-test('rear brake with front held: a medium press hovering between steps does not flicker', () => {
-  const rear = new RearBrake();
-  const light = on => frame(0x290, on ? '1F,40,00,0E,00,00,00,00' : '00,10,00,02,00,00,00,00');
-  const r12f = v => frame(0x12f, `${(v >> 8).toString(16)},${(v & 0xff).toString(16)},00,20,00,00,00,00`);
-  for (let i = 0; i < 50; i++) rear.observe([light(false), r12f(304)]);
-  for (let i = 0; i < 20; i++) rear.observe([light(true), r12f(304)]);                 // front only
-  assert.equal(rear.read(48).rearBrake, false);
-  const states = [];
-  for (let i = 0; i < 100; i++) {                                                        // rear wobbles +24 / +40
-    rear.observe([light(true), r12f(i % 3 ? 328 : 344)]);
-    if (i > 30) states.push(rear.read(48).rearBrake);
-  }
-  assert.ok(states.every(Boolean), 'stays on through the wobble');
-  for (let i = 0; i < 20; i++) rear.observe([light(true), r12f(304)]);                 // rear released, front held
-  assert.equal(rear.read(48).rearBrake, false);
+test('lean from 0x12F D0-D1 (owner capture 2026-10-26: tilted by hand on the side stand)', () => {
+  const cal = { ...DEFAULT_CALIBRATION, leanScale: 1, leanZero: 0 };
+  assert.equal(decodeKtm(rowsOf(frame(0x12f, '08,D0,00,20,00,00,00,70')), cal).leanRaw, 141);   // right
+  assert.equal(decodeKtm(rowsOf(frame(0x12f, 'FA,10,00,20,00,00,00,56')), cal).leanRaw, -95);   // left
+  assert.equal(decodeKtm(rowsOf(frame(0x12f, '00,A0,00,20,00,00,00,91')), cal).leanRaw, 10);    // upright, noise
+  assert.equal(decodeKtm(rowsOf(frame(0x12f, '08,D0,00,20,00,00,00,70')), { ...cal, leanZero: 1, leanScale: 0.1 }).lean, 14);
 });
 
 test('odometer: 0x55A D0–D2 ÷ 10 km (owner dash 2,143 km)', () => {

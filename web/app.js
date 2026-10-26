@@ -16,7 +16,7 @@ const clock = createClock();
 const rearBrake = new RearBrake();
 const telemetry = () => {
   const tel = decodeKtm(rows(), calibration, deviceNow());
-  return tel.brakeLight === undefined ? tel : { ...tel, ...rearBrake.read(calibration.rearMax ?? DEFAULT_CALIBRATION.rearMax) };
+  return tel.brakeLight === undefined ? tel : { ...tel, ...rearBrake.read() };
 };
 let signals = load(keys.signals, []).flatMap(s => { try { return [validateSignal(s)]; } catch { return []; } });
 let calibration = { ...DEFAULT_CALIBRATION, ...load(keys.calibration, {}) };
@@ -889,7 +889,6 @@ function renderSignals() {
   $('cal-speed-state').textContent = calibration.speedCalibrated ? `Calibrated: 1 raw step = ${calibration.speedScale.toPrecision(4)} km/h.` : `Not calibrated. Using a guess of ${DEFAULT_CALIBRATION.speedScale} km/h per raw step.`;
   $('cal-fuel-state').textContent = `${calibration.fuelCalibrated ? 'Calibrated' : 'Not calibrated, using a guess'}: ${(calibration.fuelScale ?? DEFAULT_CALIBRATION.fuelScale).toPrecision(3)} L/h per step. Trip 2 has counted ${trips[1].fuelL.toFixed(2)} L, so about ${fuelLeft().toFixed(1)} of ${tankL()} L is left.`;
   if (document.activeElement !== $('cal-tank-value')) $('cal-tank-value').value = tankL();
-  if (!$('cal-rear').disabled) $('cal-rear-state').textContent = `100 % = a rise of ${calibration.rearMax ?? DEFAULT_CALIBRATION.rearMax} over the resting level. Rise now: ${tel.rearRise ?? '--'}.`;
   if (!$('cal-brake').disabled) $('cal-brake-state').textContent = `100 % = raw ${(calibration.brakeMax ?? DEFAULT_CALIBRATION.brakeMax).toLocaleString()}. Raw now: ${tel.frontBrake?.toLocaleString() ?? '--'}.`;
   $('cal-lean-state').textContent = calibration.leanCalibrated ? `Calibrated: zero at raw ${calibration.leanZero}, ${calibration.leanScale.toPrecision(3)}° per step.` : `Not calibrated. Raw lean now: ${tel.leanRaw ?? '--'}.`;
 
@@ -1079,7 +1078,7 @@ $('cal-speed').addEventListener('submit', e => {
 });
 $('cal-lean-zero').addEventListener('click', () => {
   const tel = decodeKtm(store.rows, calibration, deviceNow());
-  if (tel.leanRaw === undefined) { notice('No lean data yet (0x12B). Connect with the ignition on.'); return; }
+  if (tel.leanRaw === undefined) { notice('No lean data yet (0x12F). Connect with the ignition on.'); return; }
   calibration = { ...calibration, leanZero: tel.leanRaw };
   save(keys.calibration, calibration);
   notice(`Upright set at raw ${tel.leanRaw}. Now lean the bike to a known angle and enter it.`);
@@ -1148,22 +1147,6 @@ $('cal-fuel').addEventListener('submit', e => {
   trips[1].reset();
   save(keys.trips, trips);
   notice(`Fuel calibrated: the dashboard had counted ${measured.toFixed(2)} L, the pump says ${litres} L. Trip 2 has been reset for the next tank.`);
-});
-$('cal-rear').addEventListener('click', () => {
-  let max = 0, left = 5;
-  $('cal-rear').disabled = true;
-  const sample = setInterval(() => { max = Math.max(max, rearBrake.read().rearRise ?? 0); }, 30);
-  const tick = setInterval(() => {
-    $('cal-rear-state').textContent = `${--left} s`;
-    if (left > 0) return;
-    clearInterval(sample); clearInterval(tick);
-    $('cal-rear').disabled = false;
-    if (max < 32) { notice('The rear reading barely rose. Press the pedal firmly for the whole 5 seconds, then try again.'); return; }
-    calibration = { ...calibration, rearMax: max };
-    save(keys.calibration, calibration);
-    notice(`Full rear press set at a rise of ${max}. The dashboard now shows rear brake as a percentage of that.`);
-  }, 1000);
-  $('cal-rear-state').textContent = `${left} s`;
 });
 $('cal-lean').addEventListener('submit', e => {
   e.preventDefault();
