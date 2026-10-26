@@ -643,3 +643,5 @@ dialog form { display: grid; gap: .9rem; }
 /* Small lean indicator on the ride screens. */
 .screen-svg .lean-mini { color: var(--ink); }
 .screen-svg .lean-mini .lean-ground { stroke: var(--ink-faint); stroke-width: 3; stroke-linecap: round; }
+
+.screen-svg .lean-mini image { filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .55)); }

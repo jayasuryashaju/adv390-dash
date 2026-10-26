@@ -1,6 +1,6 @@
 // Network first, cache fallback: always fresh when online, still opens offline on the bike.
-const CACHE = 'adv390-v38';
-const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'core.mjs', 'manifest.webmanifest', 'icon.svg'];
+const CACHE = 'adv390-v42';
+const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'core.mjs', 'manifest.webmanifest', 'icon.svg', 'bike-rear.png'];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));
