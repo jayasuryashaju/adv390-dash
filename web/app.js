@@ -984,8 +984,8 @@ function render() {
     session.rpm = Math.max(session.rpm, tel.rpm ?? 0);
     if (calibration.leanCalibrated) session.lean = Math.max(session.lean, Math.round(Math.abs(tel.lean ?? 0)));
   }
-  if (view === 'ride') { renderRide(tel); renderTiles(tel); }
   if (view !== 'ride') document.body.classList.remove('shift-1', 'shift-2'); // the shift light only covers the Ride screen
+  if (view === 'ride') { renderRide(tel); renderTiles(tel); }
   else if (view === 'trips') renderTrips(tel);
   else if (view === 'bus') renderBus();
   else if (view === 'find') renderFind();
