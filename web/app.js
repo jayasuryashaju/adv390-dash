@@ -883,6 +883,20 @@ function fillShiftForm() {
     : 'Off.';
 }
 
+// Rear-view bike that leans to the measured angle: left of the screen is the rider's left, so it matches looking at the bike from behind.
+const leanMax = { left: 0, right: 0 };
+function renderLean(tel) {
+  const lean = tel.lean, shown = lean === undefined ? 0 : Math.max(-60, Math.min(60, lean));
+  const rad = shown * Math.PI / 180;
+  $('lean-bike').setAttribute('transform', `rotate(${shown.toFixed(1)} 180 214)`);
+  $('lean-tip').setAttribute('cx', (180 + 168 * Math.sin(rad)).toFixed(1));
+  $('lean-tip').setAttribute('cy', (214 - 168 * Math.cos(rad)).toFixed(1));
+  $('lean-tip').style.visibility = lean === undefined ? 'hidden' : 'visible';
+  if (lean !== undefined) { leanMax.left = Math.max(leanMax.left, -lean); leanMax.right = Math.max(leanMax.right, lean); }
+  $('lean-readout').textContent = lean === undefined ? '--' : Math.abs(lean) < 1 ? 'Upright' : `${Math.abs(lean).toFixed(0)}° ${lean < 0 ? 'left' : 'right'}`;
+  $('lean-extremes').textContent = `Most left ${Math.round(leanMax.left)}° · most right ${Math.round(leanMax.right)}°${calibration.leanCalibrated ? '' : ' · scale not calibrated'}`;
+}
+
 function renderSignals() {
   const tel = telemetry();
   document.querySelectorAll('#ktm-map [data-key]').forEach(td => { td.textContent = formatLive(tel[td.dataset.key]); });
@@ -891,6 +905,8 @@ function renderSignals() {
   if (document.activeElement !== $('cal-tank-value')) $('cal-tank-value').value = tankL();
   if (!$('cal-brake').disabled) $('cal-brake-state').textContent = `100 % = raw ${(calibration.brakeMax ?? DEFAULT_CALIBRATION.brakeMax).toLocaleString()}. Raw now: ${tel.frontBrake?.toLocaleString() ?? '--'}.`;
   $('cal-lean-state').textContent = calibration.leanCalibrated ? `Calibrated: zero at raw ${calibration.leanZero}, ${calibration.leanScale.toPrecision(3)}° per step.` : `Not calibrated. Raw lean now: ${tel.leanRaw ?? '--'}.`;
+
+  renderLean(tel);
 
   const signature = JSON.stringify(signals);
   if (signature !== signalSignature) {
@@ -1076,6 +1092,7 @@ $('cal-speed').addEventListener('submit', e => {
   save(keys.calibration, calibration);
   notice('Speed calibrated against your speedometer. Speedometers read a few percent high, so this matches the dash rather than GPS.');
 });
+$('lean-max-reset').addEventListener('click', () => { leanMax.left = leanMax.right = 0; });
 $('cal-lean-zero').addEventListener('click', () => {
   const tel = decodeKtm(store.rows, calibration, deviceNow());
   if (tel.leanRaw === undefined) { notice('No lean data yet (0x12F). Connect with the ignition on.'); return; }

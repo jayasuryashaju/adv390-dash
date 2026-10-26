@@ -619,3 +619,23 @@ dialog form { display: grid; gap: .9rem; }
 
 .table-tools .check { display: flex; align-items: center; gap: 8px; font-size: 14px; white-space: nowrap; }
 .table-tools .check input { width: 22px; min-height: 22px; accent-color: var(--accent); }
+
+/* Lean view: rear view of the bike at the measured angle. */
+.lean-card { margin-top: .8rem; max-width: 460px; }
+.lean-view { width: 100%; height: auto; display: block; }
+.lean-view .lean-scale line { stroke: var(--ink-faint); stroke-width: 2; }
+.lean-view .lean-scale text { fill: var(--ink-soft); font: 600 13px 'Saira Condensed', sans-serif; }
+.lean-view .lean-upright { stroke: var(--ink-faint); stroke-width: 1.5; stroke-dasharray: 4 6; }
+.lean-view .lean-ground { stroke: var(--ink-soft); stroke-width: 3; stroke-linecap: round; }
+.lean-view .lean-bike { transition: transform .12s linear; }
+.lean-view .lean-bike .tyre { fill: var(--ink-faint); stroke: var(--ink-soft); stroke-width: 2; }
+.lean-view .lean-bike .tread { stroke: var(--ink-soft); stroke-width: 2; opacity: .6; }
+.lean-view .lean-bike .body { fill: var(--raised); stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; }
+.lean-view .lean-bike .tail { fill: var(--red); stroke: none; }
+.lean-view .lean-bike .bar { stroke: var(--ink); stroke-width: 8; stroke-linecap: round; fill: none; }
+.lean-view .lean-bike .bar.thin { stroke-width: 4; }
+.lean-view .lean-bike .mirror { fill: var(--raised); stroke: var(--ink); stroke-width: 3; }
+.lean-view .lean-bike .grip { fill: var(--accent); }
+.lean-view .lean-tip { fill: var(--accent); }
+.lean-view .lean-side { fill: var(--ink-soft); font: 600 14px 'Saira Condensed', sans-serif; letter-spacing: .12em; }
+.lean-readout { font: 800 2.2rem/1 'Saira Condensed', sans-serif; text-align: center; margin: .2rem 0 0; }

@@ -512,6 +512,50 @@
             <button type="submit">Calibrate lean</button>
           </form>
           <p class="hint" id="cal-lean-state"></p>
+        <div class="lean-card">
+          <svg id="lean-view" class="lean-view" viewBox="-20 0 400 250" role="img" aria-label="Rear view of the bike, tilted to the measured lean angle">
+            <g class="lean-scale">
+          <line x1="27.6" y1="126.0" x2="15.5" y2="119.0"/>
+          <text x="3.3" y="117.0" text-anchor="middle">60</text>
+          <line x1="42.1" y1="98.3" x2="36.0" y2="93.2"/>
+          <line x1="66.9" y1="79.2" x2="57.9" y2="68.5"/>
+          <text x="48.9" y="62.7" text-anchor="middle">40</text>
+          <line x1="90.0" y1="58.1" x2="86.0" y2="51.2"/>
+          <line x1="119.8" y1="48.6" x2="115.0" y2="35.5"/>
+          <text x="110.2" y="27.3" text-anchor="middle">20</text>
+          <line x1="148.7" y1="36.7" x2="147.4" y2="28.9"/>
+          <line x1="180.0" y1="38.0" x2="180.0" y2="24.0"/>
+          <line x1="211.3" y1="36.7" x2="212.6" y2="28.9"/>
+          <line x1="240.2" y1="48.6" x2="245.0" y2="35.5"/>
+          <text x="249.8" y="27.3" text-anchor="middle">20</text>
+          <line x1="270.0" y1="58.1" x2="274.0" y2="51.2"/>
+          <line x1="293.1" y1="79.2" x2="302.1" y2="68.5"/>
+          <text x="311.1" y="62.7" text-anchor="middle">40</text>
+          <line x1="317.9" y1="98.3" x2="324.0" y2="93.2"/>
+          <line x1="332.4" y1="126.0" x2="344.5" y2="119.0"/>
+          <text x="356.7" y="117.0" text-anchor="middle">60</text>
+            </g>
+            <line class="lean-upright" x1="180" y1="20" x2="180" y2="214"/>
+            <line class="lean-ground" x1="20" y1="214" x2="340" y2="214"/>
+            <g id="lean-bike" class="lean-bike">
+              <rect class="tyre" x="165" y="150" width="30" height="64" rx="12"/>
+              <path class="tread" d="M170 160h20M170 172h20M170 184h20M170 196h20"/>
+              <rect class="body" x="150" y="118" width="60" height="34" rx="10"/>
+              <rect class="tail" x="164" y="126" width="32" height="12" rx="5"/>
+              <path class="body" d="M142 120 154 78h52l12 42z"/>
+              <path class="body" d="M156 78 164 44h32l8 34z"/>
+              <path class="bar" d="M106 56h148"/>
+              <path class="bar thin" d="M120 56l-8-22m128 22 8-22"/>
+              <circle class="mirror" cx="110" cy="30" r="7"/><circle class="mirror" cx="250" cy="30" r="7"/>
+              <rect class="grip" x="96" y="50" width="22" height="12" rx="6"/><rect class="grip" x="242" y="50" width="22" height="12" rx="6"/>
+            </g>
+            <circle id="lean-tip" class="lean-tip" cx="180" cy="40" r="6"/>
+            <text class="lean-side" x="30" y="30">LEFT</text><text class="lean-side" x="330" y="30" text-anchor="end">RIGHT</text>
+          </svg>
+          <p class="lean-readout" id="lean-readout">--</p>
+          <p class="hint" id="lean-extremes">Most left -- · most right --</p>
+          <div class="inline-form"><button type="button" id="lean-max-reset" class="quiet">Reset maximum</button></div>
+        </div>
         </div>
         <div class="cal-block">
           <h2>Front brake</h2>
