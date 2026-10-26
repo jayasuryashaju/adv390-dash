@@ -177,7 +177,7 @@ export const KTM_MAP = [
   { key: 'rearBrake', label: 'Rear brake', id: 0x12f, where: 'D0-D1', rule: 'Rises above its resting level with the pedal (on at +28, off below +12)', source: 'capture' },
   { key: 'rearBrakePct', label: 'Rear brake (of full press)', id: 0x12f, where: 'D0-D1', rule: 'Rise ÷ calibrated maximum; steps of 16', source: 'capture' },
   { key: 'tcButton', label: 'Traction control button', id: 0x450, where: 'D2 bit 0x01', rule: '1 = pressed', source: 'ktm' },
-  { key: 'quickshifter', label: 'Quickshifter on/off', id: 0x541, where: 'D0 bit 0x04', rule: '1 = on (polarity to confirm)', source: 'capture' },
+  { key: 'quickshifter', label: 'Quickshifter on/off', id: 0x541, where: 'D0 bit 0x04', rule: '1 = on, 0 = off (owner-checked with the dash menu)', source: 'confirmed' },
   { key: 'standUp', label: 'Side stand', id: 0x540, where: 'D3 bit 0x01', rule: '1 = up, 0 = down (690: D4)', source: 'confirmed' },
   { key: 'coolant', label: 'Coolant temperature', id: 0x540, where: 'D5-D6', rule: 'Big-endian ÷ 10, °C (690: D6-D7)', source: 'capture' },
   { key: 'odometer', label: 'Odometer', id: 0x55a, where: 'D0-D2', rule: 'Big-endian ÷ 10, km (1 Hz)', source: 'confirmed' },
@@ -242,7 +242,7 @@ export function decodeKtm(rows, calibration = DEFAULT_CALIBRATION, nowUs = null,
     out.absMode = { 1: 'Road', 2: 'Offroad' }[d450[3]] ?? `Mode ${d450[3]}`; // owner capture: 01 <-> 02
   }
   if (d55a) out.odometer = ((d55a[0] << 16) | (d55a[1] << 8) | d55a[2]) / 10; // 21430 = dash 2,143 km
-  if (d541) out.quickshifter = (d541[0] & 0x04) !== 0; // owner capture 2026-10-26: bit flipped with the dash menu setting (polarity to confirm)
+  if (d541) out.quickshifter = (d541[0] & 0x04) !== 0; // owner capture 2026-10-26: bit flipped with the dash menu setting (owner-confirmed: set = on)
   if (d540) {
     out.standUp = (d540[3] & 0x01) !== 0; // 390: D3 bit 0x01 set = stand up (owner-checked)
     out.coolant = be16(d540, 5) / 10; // 390 Adventure: one byte earlier than the 690

@@ -167,6 +167,7 @@ class DemoTransport {
     if (scene === 'modes') s.map = [0, 2, 1][Math.floor(t / 6) % 3];
     if (scene === 'hot') s.coolant = 108;
     if (scene === 'stand') s.standUp = false;
+    if (scene === 'qsoff') s.quickshifter = false;
     if (!this.state.running) return;
     const frames = demoFrames(s, Math.round(t * 1e6));
     frames.forEach(f => { f.count = this.state.mode === 'raw' ? 1 : 2; });
@@ -461,7 +462,7 @@ function renderRide(tel) {
     speed: fmt(tel.speed), rpm: fmt(tel.rpm), gear: tel.gear ?? '--',
     engine: engine ?? (link === 'connected' ? 'Waiting for data' : 'Not connected'),
     throttle: fmt(tel.throttle), brake: fmt(tel.frontBrakePct), rearBrake: fmt(tel.rearBrakePct), coolant: fmt(tel.coolant),
-    rideMode: tel.rideMode ?? '--', traction: tel.traction ?? '--', abs: tel.absMode ?? '--',
+    rideMode: tel.rideMode ?? '--', traction: tel.traction ?? '--', abs: tel.absMode ?? '--', qs: tel.quickshifter === undefined ? '--' : tel.quickshifter ? 'On' : 'Off',
     tcTag: `[ TC ${upper(tel.traction)} ]`, absTag: `[ ABS ${upper(tel.absMode)} ]`, fuel: fmt(fuelLeft(), 1), range: fmt(rangeKm()), odo: fmt(tel.odometer)
   };
   const pct = {
@@ -470,7 +471,7 @@ function renderRide(tel) {
     coolant: tel.coolant === undefined ? null : (tel.coolant - COOL_MIN) / (COOL_MAX - COOL_MIN) * 100,
     fuel: fuelLeft() / tankL() * 100
   };
-  const alert = { brake: tel.frontBrakePct > 0, rearBrake: !!tel.rearBrake, traction: tel.traction === 'Off', abs: tel.absMode === 'Offroad',
+  const alert = { brake: tel.frontBrakePct > 0, rearBrake: !!tel.rearBrake, traction: tel.traction === 'Off', abs: tel.absMode === 'Offroad', qs: tel.quickshifter === false,
     tcTag: tel.traction === 'Off', absTag: tel.absMode === 'Offroad', coolant: tel.coolant >= COOL_HOT, rpm: rpm >= REV_WARN, fuel: fuelLeft() / tankL() < FUEL_LOW };
 
   const el = rideElements();
@@ -609,6 +610,7 @@ const WIDGETS = {
   rearBrake: { icon: 'sneaker-move', label: 'Rear brake', unit: '%', get: t => t.rearBrakePct, bar: v => v, alert: v => v > 0 },
   rideMode: { icon: v => RIDE_MODE_ICONS[v] ?? 'motorcycle', label: 'Ride mode', get: t => t.rideMode },
   traction: { icon: 't-tc', label: 'Traction control', get: t => t.traction, alert: v => v === 'Off' },
+  quickshifter: { icon: 't-qs', label: 'Quickshifter', get: t => t.quickshifter === undefined ? undefined : t.quickshifter ? 'On' : 'Off', alert: v => v === 'Off' },
   abs: { icon: 't-abs', label: 'ABS', get: t => t.absMode, alert: v => v === 'Offroad' },
   topSpeed: { icon: 'flag-checkered', label: 'Top speed', unit: 'km/h', get: () => session.speed },
   lean: { icon: 'crosshair-simple', label: 'Lean', unit: '°', get: t => t.lean === undefined ? undefined : Math.abs(t.lean) }

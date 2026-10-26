@@ -57,6 +57,7 @@
     <symbol id="t-kill" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 5.9A7 7 0 1 1 10.8 5.1"/><path d="M8.2 2.9l2.6 2.2-2.2 2.6"/><path d="M4 4l16 16"/></g></symbol>
     <symbol id="t-temp" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v9.2M12 5.8h3.2M12 9h3.2"/><circle cx="12" cy="15" r="2.6"/><path d="M2.8 20.6c1.5-1.2 3-1.2 4.6 0s3 1.2 4.6 0 3-1.2 4.6 0 3 1.2 4.6 0"/></g></symbol>
     <symbol id="t-tc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9.8" r="7"/><text x="12" y="12.2" text-anchor="middle" font-size="6.8" font-weight="800" fill="currentColor" stroke="none" font-family="Saira Condensed, Arial Narrow, sans-serif">TC</text><path d="M3.5 21.3c1.2-1.5 2.4-1.5 3.6 0s2.4 1.5 3.6 0M13.3 21.3c1.2-1.5 2.4-1.5 3.6 0s2.4 1.5 3.6 0"/></g></symbol>
+    <symbol id="t-qs" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9.8" r="7"/><text x="12" y="12.2" text-anchor="middle" font-size="6.8" font-weight="800" fill="currentColor" stroke="none" font-family="Saira Condensed, Arial Narrow, sans-serif">QS</text><path d="M7.6 21.4 12 18l4.4 3.4"/></g></symbol>
     <symbol id="t-abs" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7.2"/><path d="M3.4 6.8a10.5 10.5 0 0 0 0 10.4M20.6 6.8a10.5 10.5 0 0 1 0 10.4"/><text x="12" y="14.4" text-anchor="middle" font-size="6.6" font-weight="800" fill="currentColor" stroke="none" font-family="Saira Condensed, Arial Narrow, sans-serif">ABS</text></g></symbol>
     <symbol id="t-clutch" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 9h5.5"/><circle cx="10" cy="9" r="2"/><path d="M11.8 10.2c3.4 1 6.4 2.9 9.4 5.9M10 7V3.5"/></g></symbol>
     <symbol id="t-brake" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="8" width="11" height="8" rx="2"/><path d="M2.5 12h2M19.5 12h2M4.6 5.6l1.6 1.6M19.4 5.6l-1.6 1.6M4.6 18.4l1.6-1.6M19.4 18.4l-1.6-1.6"/></g></symbol>
@@ -70,7 +71,7 @@
       <li id="lamp-kill" class="lamp red" title="Kill switch on Stop"><svg class="t" aria-hidden="true"><use href="#t-kill"/></svg><span>Engine stop</span></li>
       <li id="lamp-temp" class="lamp red" title="Coolant 105 °C or hotter"><svg class="t" aria-hidden="true"><use href="#t-temp"/></svg><span>Coolant</span></li>
       <li id="lamp-tc" class="lamp amber" title="Traction control off"><svg class="t" aria-hidden="true"><use href="#t-tc"/></svg><span>TC off</span></li>
-      <li id="lamp-qs" class="lamp green" title="Quickshifter"><svg class="t" aria-hidden="true" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 6 13.5h5L10 21l8-11h-5.5z"/></g></svg><span>QS on</span></li>
+      <li id="lamp-qs" class="lamp green" title="Quickshifter"><svg class="t" aria-hidden="true"><use href="#t-qs"/></svg><span>QS on</span></li>
       <li id="lamp-abs" class="lamp amber" title="ABS in Offroad mode"><svg class="t" aria-hidden="true"><use href="#t-abs"/></svg><span>ABS offroad</span></li>
       <li id="lamp-clutch" class="lamp white" title="Clutch lever pulled"><svg class="t" aria-hidden="true"><use href="#t-clutch"/></svg><span>Clutch</span></li>
       <li id="lamp-brake" class="lamp red" title="Brake light on"><svg class="t" aria-hidden="true"><use href="#t-brake"/></svg><span>Brake</span></li>
@@ -101,6 +102,7 @@
             <g class="mode-pill"><rect x="440" y="296" width="236" height="72" rx="36"/><use data-mode-icon href="#i-motorcycle" x="464" y="312" width="40" height="40"/><text class="mode-name" x="514" y="349" font-size="50" data-bind="rideMode">--</text></g>
             <use href="#t-tc" x="440" y="394" width="36" height="36"/><text class="aid-lbl" x="486" y="423" font-size="32">TRACTION</text><text class="val" x="676" y="424" font-size="38" text-anchor="end" data-bind="traction">--</text>
             <use href="#t-abs" x="440" y="448" width="36" height="36"/><text class="aid-lbl" x="486" y="477" font-size="32">ABS</text><text class="val" x="676" y="478" font-size="38" text-anchor="end" data-bind="abs">--</text>
+            <g data-alert="qs"><use href="#t-qs" x="440" y="502" width="36" height="36"/><text class="aid-lbl" x="486" y="531" font-size="32">SHIFTER</text><text class="val" x="676" y="532" font-size="38" text-anchor="end" data-bind="qs">--</text></g>
 
             <g class="inbar long"><text class="lbl" x="150" y="580" font-size="21">THROTTLE</text><rect class="track" x="150" y="590" width="526" height="10" rx="5"/><rect class="fill" data-meter="throttle" x="150" y="590" width="526" height="10" rx="5"/></g>
             <g class="inbar long brake"><text class="lbl" x="150" y="626" font-size="21">FRONT BRAKE</text><rect class="track" x="150" y="636" width="526" height="10" rx="5"/><rect class="fill" data-meter="brake" x="150" y="636" width="526" height="10" rx="5"/></g>
@@ -145,8 +147,9 @@
             <line class="rule" x1="24" y1="434" x2="576" y2="434"/>
             <use data-mode-icon href="#i-motorcycle" x="24" y="452" width="30" height="30"/>
             <text class="mode-name" x="62" y="478" font-size="30" data-bind="rideMode">--</text>
-            <use href="#t-tc" x="250" y="454" width="26" height="26"/><text class="lbl" x="284" y="476" font-size="20">TC</text><text class="val" x="386" y="477" font-size="24" text-anchor="end" data-bind="traction">--</text>
-            <use href="#t-abs" x="420" y="454" width="26" height="26"/><text class="lbl" x="454" y="476" font-size="20">ABS</text><text class="val" x="576" y="477" font-size="24" text-anchor="end" data-bind="abs">--</text>
+            <use href="#t-tc" x="196" y="454" width="26" height="26"/><text class="lbl" x="228" y="476" font-size="20">TC</text><text class="val" x="258" y="477" font-size="24" data-bind="traction">--</text>
+            <use href="#t-abs" x="332" y="454" width="26" height="26"/><text class="lbl" x="364" y="476" font-size="20">ABS</text><text class="val" x="404" y="477" font-size="24" data-bind="abs">--</text>
+            <g data-alert="qs"><use href="#t-qs" x="512" y="454" width="26" height="26"/><text class="val" x="544" y="477" font-size="24" data-bind="qs">--</text></g>
             <g class="inbar long"><text class="lbl" x="24" y="526" font-size="13">THROTTLE</text><rect class="track" x="24" y="536" width="160" height="6" rx="3"/><rect class="fill" data-meter="throttle" x="24" y="536" width="160" height="6" rx="3"/></g>
             <g class="inbar long brake"><text class="lbl" x="220" y="526" font-size="13">FRONT BRAKE</text><rect class="track" x="220" y="536" width="160" height="6" rx="3"/><rect class="fill" data-meter="brake" x="220" y="536" width="160" height="6" rx="3"/></g>
             <g class="inbar long brake rear"><text class="lbl" x="416" y="526" font-size="13">REAR BRAKE</text><rect class="track" x="416" y="536" width="160" height="6" rx="3"/><rect class="fill" data-meter="rearBrake" x="416" y="536" width="160" height="6" rx="3"/></g>
@@ -179,6 +182,8 @@
             <g class="row"><use href="#t-abs" x="1250" y="346" width="36" height="36"/><text class="lbl" x="1298" y="374" font-size="28">ABS</text><text class="val" x="1540" y="376" font-size="34" text-anchor="end" data-bind="abs">--</text></g>
             <line class="rule" x1="1250" y1="406" x2="1540" y2="406"/>
             <g class="row"><use href="#i-thermometer-simple" x="1250" y="430" width="36" height="36"/><text class="lbl" x="1298" y="458" font-size="28">Coolant</text><text class="val" x="1540" y="460" font-size="34" text-anchor="end"><tspan data-bind="coolant">--</tspan> °C</text></g>
+            <line class="rule" x1="1250" y1="490" x2="1540" y2="490"/>
+            <g class="row" data-alert="qs"><use href="#t-qs" x="1250" y="514" width="36" height="36"/><text class="lbl" x="1298" y="542" font-size="28">Quickshifter</text><text class="val" x="1540" y="544" font-size="34" text-anchor="end" data-bind="qs">--</text></g>
             </g>
 
             <use href="#i-gas-pump" x="60" y="620" width="34" height="34"/>
@@ -188,7 +193,7 @@
             <text class="val" data-anchor="right" x="1540" y="648" font-size="32" text-anchor="end"><tspan data-bind="range">--</tspan><tspan class="unit" dx="8" font-size="22">km range</tspan></text>
           </svg>
 
-          <svg class="screen-svg tall-svg" viewBox="0 0 600 690" role="img" aria-label="Rain cluster">
+          <svg class="screen-svg tall-svg" viewBox="0 0 600 754" role="img" aria-label="Rain cluster">
             <g class="mode-badge"><use data-mode-icon href="#i-cloud-rain" x="24" y="22" width="32" height="32"/><text x="64" y="50" font-size="28" data-bind="rideMode">--</text></g>
             <g class="segbar" data-kind="rpm" data-x="24" data-y="70" data-w="552" data-h="40" data-n="60" data-gap="5"></g>
             <g class="scale" data-x="24" data-w="552" data-y="134" data-font="18"></g>
@@ -205,11 +210,13 @@
             <line class="rule" x1="24" y1="526" x2="576" y2="526"/>
             <g class="row"><use href="#t-abs" x="24" y="542" width="30" height="30"/><text class="lbl" x="64" y="566" font-size="24">ABS</text><text class="val" x="576" y="567" font-size="28" text-anchor="end" data-bind="abs">--</text></g>
             <line class="rule" x1="24" y1="590" x2="576" y2="590"/>
-            <g class="row"><use href="#i-thermometer-simple" x="24" y="606" width="30" height="30"/><text class="lbl" x="64" y="630" font-size="24">Coolant</text><text class="val" x="576" y="631" font-size="28" text-anchor="end"><tspan data-bind="coolant">--</tspan> °C</text></g>
-            <use href="#i-gas-pump" x="24" y="650" width="28" height="28"/>
-            <rect class="track" x="64" y="661" width="300" height="7" rx="3.5"/>
-            <rect class="fill fuel-fill" data-meter="fuel" x="64" y="661" width="300" height="7" rx="3.5"/>
-            <text class="val" x="576" y="672" font-size="24" text-anchor="end"><tspan data-bind="fuel">--</tspan> L / <tspan data-bind="range">--</tspan> km</text>
+            <g class="row" data-alert="qs"><use href="#t-qs" x="24" y="606" width="30" height="30"/><text class="lbl" x="64" y="630" font-size="24">Quickshifter</text><text class="val" x="576" y="631" font-size="28" text-anchor="end" data-bind="qs">--</text></g>
+            <line class="rule" x1="24" y1="654" x2="576" y2="654"/>
+            <g class="row"><use href="#i-thermometer-simple" x="24" y="670" width="30" height="30"/><text class="lbl" x="64" y="694" font-size="24">Coolant</text><text class="val" x="576" y="695" font-size="28" text-anchor="end"><tspan data-bind="coolant">--</tspan> °C</text></g>
+            <use href="#i-gas-pump" x="24" y="714" width="28" height="28"/>
+            <rect class="track" x="64" y="725" width="300" height="7" rx="3.5"/>
+            <rect class="fill fuel-fill" data-meter="fuel" x="64" y="725" width="300" height="7" rx="3.5"/>
+            <text class="val" x="576" y="736" font-size="24" text-anchor="end"><tspan data-bind="fuel">--</tspan> L / <tspan data-bind="range">--</tspan> km</text>
           </svg>
         </div>
 
@@ -249,12 +256,13 @@
             <text class="gear" x="1185" y="418" font-size="270" text-anchor="middle" data-bind="gear">--</text>
             <text class="cap" x="1185" y="468" font-size="24" text-anchor="middle">GEAR</text>
 
-            <g class="pill" data-alert="traction"><rect x="420" y="608" width="420" height="66" rx="14"/><use href="#t-tc" x="442" y="622" width="38" height="38"/><text class="lbl" x="494" y="651" font-size="28">Traction</text><text class="val" x="816" y="653" font-size="34" text-anchor="end" data-bind="traction">--</text></g>
-            <g class="pill" data-alert="abs"><rect x="864" y="608" width="466" height="66" rx="14"/><use href="#t-abs" x="886" y="622" width="38" height="38"/><text class="lbl" x="938" y="651" font-size="28">ABS</text><text class="val" x="1306" y="653" font-size="34" text-anchor="end" data-bind="abs">--</text></g>
+            <g class="pill" data-alert="traction"><rect x="400" y="608" width="330" height="66" rx="14"/><use href="#t-tc" x="420" y="622" width="38" height="38"/><text class="lbl" x="470" y="651" font-size="28">Traction</text><text class="val" x="706" y="653" font-size="34" text-anchor="end" data-bind="traction">--</text></g>
+            <g class="pill" data-alert="abs"><rect x="755" y="608" width="330" height="66" rx="14"/><use href="#t-abs" x="775" y="622" width="38" height="38"/><text class="lbl" x="825" y="651" font-size="28">ABS</text><text class="val" x="1061" y="653" font-size="34" text-anchor="end" data-bind="abs">--</text></g>
+            <g class="pill" data-alert="qs"><rect x="1110" y="608" width="330" height="66" rx="14"/><use href="#t-qs" x="1130" y="622" width="38" height="38"/><text class="lbl" x="1180" y="651" font-size="28">Quickshifter</text><text class="val" x="1416" y="653" font-size="34" text-anchor="end" data-bind="qs">--</text></g>
             </g>
           </svg>
 
-          <svg class="screen-svg tall-svg" viewBox="0 0 600 700" role="img" aria-label="Offroad cluster">
+          <svg class="screen-svg tall-svg" viewBox="0 0 600 770" role="img" aria-label="Offroad cluster">
             <g class="mode-badge"><rect x="20" y="16" width="200" height="50" rx="9"/><use data-mode-icon href="#i-mountains" x="34" y="25" width="32" height="32"/><text x="74" y="52" font-size="26" data-bind="rideMode">--</text></g>
             <g class="segbar" data-kind="rpm" data-x="20" data-y="84" data-w="560" data-h="42" data-n="30" data-gap="4"></g>
             <g class="scale" data-x="20" data-w="560" data-y="148" data-font="18"></g>
@@ -278,6 +286,7 @@
 
             <g class="pill" data-alert="traction"><rect x="20" y="596" width="272" height="60" rx="12"/><use href="#t-tc" x="36" y="610" width="32" height="32"/><text class="lbl" x="76" y="635" font-size="22">TC</text><text class="val" x="276" y="637" font-size="28" text-anchor="end" data-bind="traction">--</text></g>
             <g class="pill" data-alert="abs"><rect x="308" y="596" width="272" height="60" rx="12"/><use href="#t-abs" x="324" y="610" width="32" height="32"/><text class="lbl" x="364" y="635" font-size="22">ABS</text><text class="val" x="564" y="637" font-size="28" text-anchor="end" data-bind="abs">--</text></g>
+            <g class="pill" data-alert="qs"><rect x="20" y="672" width="560" height="60" rx="12"/><use href="#t-qs" x="36" y="686" width="32" height="32"/><text class="lbl" x="76" y="711" font-size="22">Quickshifter</text><text class="val" x="564" y="713" font-size="28" text-anchor="end" data-bind="qs">--</text></g>
           </svg>
         </div>
       </div>
