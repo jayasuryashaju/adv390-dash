@@ -767,6 +767,8 @@ const TARGETS = [
   { key: 'front-brake-switch', name: 'Front brake switch', action: 'Pull and release the front brake lever several times. Pressure is already on 0x290; this looks for the light switch.' },
   { key: 'abs-mode', name: 'ABS mode', action: 'Change the ABS mode in the dash menu and back, twice.' },
   { key: 'menu-buttons', name: 'Handlebar menu buttons', action: 'Press one menu button repeatedly. Repeat the search for each button.' },
+  { key: 'qs-lever', name: 'Quickshifter: gear lever sensor', action: 'Ignition on, engine off, bike stationary. Press the gear lever up with your foot, hold briefly and release, six times. Then repeat the search pressing down.' },
+  { key: 'qs-cut', name: 'Quickshifter: ignition cut', action: 'Only with the rear wheel off the ground on a paddock stand, engine running, in 2nd, clutch released. Hold about 5000 rpm and click up three times without the clutch. Never test this while riding.' },
   { key: 'hazards', name: 'Hazard lights', action: 'Switch the hazards on and off twice.' },
   { key: 'other', name: 'Something else', action: 'Operate the control repeatedly, or hold it for the whole recording if it stays on.' }
 ];
