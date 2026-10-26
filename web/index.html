@@ -58,6 +58,7 @@
     <symbol id="t-temp" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v9.2M12 5.8h3.2M12 9h3.2"/><circle cx="12" cy="15" r="2.6"/><path d="M2.8 20.6c1.5-1.2 3-1.2 4.6 0s3 1.2 4.6 0 3-1.2 4.6 0 3 1.2 4.6 0"/></g></symbol>
     <symbol id="t-tc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9.8" r="7"/><text x="12" y="12.2" text-anchor="middle" font-size="6.8" font-weight="800" fill="currentColor" stroke="none" font-family="Saira Condensed, Arial Narrow, sans-serif">TC</text><path d="M3.5 21.3c1.2-1.5 2.4-1.5 3.6 0s2.4 1.5 3.6 0M13.3 21.3c1.2-1.5 2.4-1.5 3.6 0s2.4 1.5 3.6 0"/></g></symbol>
     <symbol id="t-qs" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9.8" r="7"/><text x="12" y="12.2" text-anchor="middle" font-size="6.8" font-weight="800" fill="currentColor" stroke="none" font-family="Saira Condensed, Arial Narrow, sans-serif">QS</text><path d="M7.6 21.4 12 18l4.4 3.4"/></g></symbol>
+    <symbol id="t-lean-bike" viewBox="0 0 100 100"><g stroke="currentColor" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" fill="none"><rect x="42" y="64" width="16" height="30" rx="6" style="fill:var(--ink-faint)"/><rect x="35" y="50" width="30" height="18" rx="6" style="fill:var(--raised)"/><path d="M31 52 38 30h24l7 22z" style="fill:var(--raised)"/><path d="M39 30 43 14h14l4 16z" style="fill:var(--raised)"/><path d="M14 24h72" stroke-width="5"/><path d="M22 24l-4-12M78 24l4-12" stroke-width="2.5"/></g><rect x="42" y="56" width="16" height="6" rx="3" style="fill:var(--red)"/><rect x="9" y="20" width="13" height="8" rx="4" style="fill:var(--accent)"/><rect x="78" y="20" width="13" height="8" rx="4" style="fill:var(--accent)"/></symbol>
     <symbol id="t-abs" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7.2"/><path d="M3.4 6.8a10.5 10.5 0 0 0 0 10.4M20.6 6.8a10.5 10.5 0 0 1 0 10.4"/><text x="12" y="14.4" text-anchor="middle" font-size="6.6" font-weight="800" fill="currentColor" stroke="none" font-family="Saira Condensed, Arial Narrow, sans-serif">ABS</text></g></symbol>
     <symbol id="t-clutch" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 9h5.5"/><circle cx="10" cy="9" r="2"/><path d="M11.8 10.2c3.4 1 6.4 2.9 9.4 5.9M10 7V3.5"/></g></symbol>
     <symbol id="t-brake" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="8" width="11" height="8" rx="2"/><path d="M2.5 12h2M19.5 12h2M4.6 5.6l1.6 1.6M19.4 5.6l-1.6 1.6M4.6 18.4l1.6-1.6M19.4 18.4l-1.6-1.6"/></g></symbol>
@@ -129,6 +130,7 @@
               <use href="#i-gas-pump" x="1580" y="546" width="38" height="38"/>
               <text class="val" x="1650" y="664" font-size="32" text-anchor="middle"><tspan data-bind="fuel">--</tspan><tspan class="unit" dx="4" font-size="20">L</tspan></text>
             </g>
+                      <g class="lean-mini"><line class="lean-ground" x1="157.68" y1="548.24" x2="238.32" y2="548.24"/><g data-lean-rot data-px="198" data-py="548.24"><use href="#t-lean-bike" x="150" y="458" width="96" height="96"/></g><text class="cap" x="282" y="488" font-size="20">LEAN</text><text class="val" x="282" y="532" font-size="56" data-bind="leanDeg">--</text><text class="cap" x="282" y="556" font-size="22" data-bind="leanSide"></text></g>
           </svg>
 
           <svg class="screen-svg tall-svg" viewBox="0 0 600 600" role="img" aria-label="Street cluster">
@@ -156,6 +158,7 @@
             <use href="#i-gas-pump" x="24" y="560" width="24" height="24"/>
             <g class="segbar" data-kind="fuel" data-x="58" data-y="566" data-w="400" data-h="14" data-n="10" data-gap="4"></g>
             <text class="val" x="576" y="582" font-size="22" text-anchor="end"><tspan data-bind="fuel">--</tspan><tspan class="unit" dx="4" font-size="15">L</tspan></text>
+                      <g class="lean-mini"><line class="lean-ground" x1="449.12" y1="420.16" x2="502.88" y2="420.16"/><g data-lean-rot data-px="476" data-py="420.16"><use href="#t-lean-bike" x="444" y="360" width="64" height="64"/></g><text class="val" x="530" y="398" font-size="30" data-bind="leanDeg">--</text><text class="cap" x="530" y="418" font-size="13" data-bind="leanSide"></text></g>
           </svg>
         </div>
 
@@ -186,11 +189,12 @@
             <g class="row" data-alert="qs"><use href="#t-qs" x="1250" y="514" width="36" height="36"/><text class="lbl" x="1298" y="542" font-size="28">Quickshifter</text><text class="val" x="1540" y="544" font-size="34" text-anchor="end" data-bind="qs">--</text></g>
             </g>
 
-            <use href="#i-gas-pump" x="60" y="620" width="34" height="34"/>
-            <rect class="track" x="110" y="633" width="520" height="8" rx="4"/>
-            <rect class="fill fuel-fill" data-meter="fuel" x="110" y="633" width="520" height="8" rx="4"/>
-            <text class="val" x="660" y="648" font-size="32"><tspan data-bind="fuel">--</tspan><tspan class="unit" dx="6" font-size="22">L est.</tspan></text>
-            <text class="val" data-anchor="right" x="1540" y="648" font-size="32" text-anchor="end"><tspan data-bind="range">--</tspan><tspan class="unit" dx="8" font-size="22">km range</tspan></text>
+            <use href="#i-gas-pump" x="60" y="640" width="34" height="34"/>
+            <rect class="track" x="110" y="653" width="520" height="8" rx="4"/>
+            <rect class="fill fuel-fill" data-meter="fuel" x="110" y="653" width="520" height="8" rx="4"/>
+            <text class="val" x="660" y="668" font-size="32"><tspan data-bind="fuel">--</tspan><tspan class="unit" dx="6" font-size="22">L est.</tspan></text>
+            <text class="val" data-anchor="right" x="1540" y="668" font-size="32" text-anchor="end"><tspan data-bind="range">--</tspan><tspan class="unit" dx="8" font-size="22">km range</tspan></text>
+                      <g class="lean-mini"><line class="lean-ground" x1="101.76" y1="627.68" x2="162.24" y2="627.68"/><g data-lean-rot data-px="132" data-py="627.68"><use href="#t-lean-bike" x="96" y="560" width="72" height="72"/></g><text class="val" x="206" y="604" font-size="50" data-bind="leanDeg">--</text><text class="cap" x="206" y="630" font-size="20" data-bind="leanSide"></text></g>
           </svg>
 
           <svg class="screen-svg tall-svg" viewBox="0 0 600 754" role="img" aria-label="Rain cluster">
@@ -217,6 +221,7 @@
             <rect class="track" x="64" y="725" width="300" height="7" rx="3.5"/>
             <rect class="fill fuel-fill" data-meter="fuel" x="64" y="725" width="300" height="7" rx="3.5"/>
             <text class="val" x="576" y="736" font-size="24" text-anchor="end"><tspan data-bind="fuel">--</tspan> L / <tspan data-bind="range">--</tspan> km</text>
+                      <g class="lean-mini"><line class="lean-ground" x1="428.48" y1="448.64" x2="475.52" y2="448.64"/><g data-lean-rot data-px="452" data-py="448.64"><use href="#t-lean-bike" x="424" y="396" width="56" height="56"/></g><text class="val" x="506" y="428" font-size="30" data-bind="leanDeg">--</text><text class="cap" x="506" y="446" font-size="14" data-bind="leanSide"></text></g>
           </svg>
         </div>
 
@@ -260,6 +265,7 @@
             <g class="pill" data-alert="abs"><rect x="755" y="608" width="330" height="66" rx="14"/><use href="#t-abs" x="775" y="622" width="38" height="38"/><text class="lbl" x="825" y="651" font-size="28">ABS</text><text class="val" x="1061" y="653" font-size="34" text-anchor="end" data-bind="abs">--</text></g>
             <g class="pill" data-alert="qs"><rect x="1110" y="608" width="330" height="66" rx="14"/><use href="#t-qs" x="1130" y="622" width="38" height="38"/><text class="lbl" x="1180" y="651" font-size="28">Quickshifter</text><text class="val" x="1416" y="653" font-size="34" text-anchor="end" data-bind="qs">--</text></g>
             </g>
+                      <g data-anchor="right"><g class="lean-mini"><line class="lean-ground" x1="1358.32" y1="311.76" x2="1445.68" y2="311.76"/><g data-lean-rot data-px="1402" data-py="311.76"><use href="#t-lean-bike" x="1350" y="214" width="104" height="104"/></g><text class="cap" x="1402" y="206" font-size="20" text-anchor="middle">LEAN</text><text class="val" x="1402" y="372" font-size="56" text-anchor="middle" data-bind="leanDeg">--</text><text class="cap" x="1402" y="400" font-size="22" text-anchor="middle" data-bind="leanSide"></text></g></g>
           </svg>
 
           <svg class="screen-svg tall-svg" viewBox="0 0 600 770" role="img" aria-label="Offroad cluster">
@@ -287,6 +293,7 @@
             <g class="pill" data-alert="traction"><rect x="20" y="596" width="272" height="60" rx="12"/><use href="#t-tc" x="36" y="610" width="32" height="32"/><text class="lbl" x="76" y="635" font-size="22">TC</text><text class="val" x="276" y="637" font-size="28" text-anchor="end" data-bind="traction">--</text></g>
             <g class="pill" data-alert="abs"><rect x="308" y="596" width="272" height="60" rx="12"/><use href="#t-abs" x="324" y="610" width="32" height="32"/><text class="lbl" x="364" y="635" font-size="22">ABS</text><text class="val" x="564" y="637" font-size="28" text-anchor="end" data-bind="abs">--</text></g>
             <g class="pill" data-alert="qs"><rect x="20" y="672" width="560" height="60" rx="12"/><use href="#t-qs" x="36" y="686" width="32" height="32"/><text class="lbl" x="76" y="711" font-size="22">Quickshifter</text><text class="val" x="564" y="713" font-size="28" text-anchor="end" data-bind="qs">--</text></g>
+                      <g class="lean-mini"><line class="lean-ground" x1="424.48" y1="486.64" x2="471.52" y2="486.64"/><g data-lean-rot data-px="448" data-py="486.64"><use href="#t-lean-bike" x="420" y="434" width="56" height="56"/></g><text class="val" x="502" y="466" font-size="30" data-bind="leanDeg">--</text><text class="cap" x="502" y="484" font-size="14" data-bind="leanSide"></text></g>
           </svg>
         </div>
       </div>

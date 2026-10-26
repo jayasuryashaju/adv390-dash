@@ -1,5 +1,5 @@
 // Network first, cache fallback: always fresh when online, still opens offline on the bike.
-const CACHE = 'adv390-v36';
+const CACHE = 'adv390-v38';
 const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'core.mjs', 'manifest.webmanifest', 'icon.svg'];
 
 self.addEventListener('install', event => {

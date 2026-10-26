@@ -20,6 +20,7 @@ const telemetry = () => {
 };
 let signals = load(keys.signals, []).flatMap(s => { try { return [validateSignal(s)]; } catch { return []; } });
 let calibration = { ...DEFAULT_CALIBRATION, ...load(keys.calibration, {}) };
+if (demo) calibration.leanCalibrated = true; // generated lean is already in degrees
 const trips = [0, 1].map(i => new Trip(load(keys.trips, [])[i] ?? {}));
 let status = null, previousStatus = null, bootId = null, rate = 0;
 let link = 'idle'; // idle | connecting | connected | reconnecting
@@ -446,7 +447,7 @@ function renderLamps(tel) {
 let rideEls = null;
 function rideElements() {
   const q = sel => [...$('view-ride').querySelectorAll(sel)];
-  return rideEls ??= { bind: q('[data-bind]'), meter: q('[data-meter]'), segbars: q('.segbar'), alertGroups: q('[data-alert]'), engine: q('[data-engine]'), uncal: q('[data-show="uncal"]'), modeIcon: q('[data-mode-icon]') };
+  return rideEls ??= { bind: q('[data-bind]'), meter: q('[data-meter]'), segbars: q('.segbar'), alertGroups: q('[data-alert]'), leanRot: q('[data-lean-rot]'), engine: q('[data-engine]'), uncal: q('[data-show="uncal"]'), modeIcon: q('[data-mode-icon]') };
 }
 
 function renderRide(tel) {
@@ -458,11 +459,13 @@ function renderRide(tel) {
     : rpm >= 500 ? 'Running' : rpm > 0 ? 'Stopping' : 'Engine off';
   const fmt = (v, d = 0) => v === undefined || v === null ? '--' : Number(v).toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d });
   const upper = v => (v ?? '--').toUpperCase();
+  const leanKnown = calibration.leanCalibrated && tel.lean !== undefined;
   const values = {
     speed: fmt(tel.speed), rpm: fmt(tel.rpm), gear: tel.gear ?? '--',
     engine: engine ?? (link === 'connected' ? 'Waiting for data' : 'Not connected'),
     throttle: fmt(tel.throttle), brake: fmt(tel.frontBrakePct), rearBrake: fmt(tel.rearBrakePct), coolant: fmt(tel.coolant),
-    rideMode: tel.rideMode ?? '--', traction: tel.traction ?? '--', abs: tel.absMode ?? '--', qs: tel.quickshifter === undefined ? '--' : tel.quickshifter ? 'On' : 'Off',
+    rideMode: tel.rideMode ?? '--', leanDeg: leanKnown ? `${Math.round(Math.abs(tel.lean))}°` : '--', leanSide: !leanKnown ? '' : tel.lean < -1 ? 'LEFT' : tel.lean > 1 ? 'RIGHT' : 'UPRIGHT',
+    traction: tel.traction ?? '--', abs: tel.absMode ?? '--', qs: tel.quickshifter === undefined ? '--' : tel.quickshifter ? 'On' : 'Off',
     tcTag: `[ TC ${upper(tel.traction)} ]`, absTag: `[ ABS ${upper(tel.absMode)} ]`, fuel: fmt(fuelLeft(), 1), range: fmt(rangeKm()), odo: fmt(tel.odometer)
   };
   const pct = {
@@ -493,6 +496,8 @@ function renderRide(tel) {
     bar.classList.toggle('low', bar.dataset.kind === 'fuel' && !!alert.fuel);
   }
   for (const g of el.alertGroups) g.classList.toggle('alert', !!alert[g.dataset.alert]);
+  const tilt = leanKnown ? Math.max(-60, Math.min(60, tel.lean)).toFixed(1) : 0;
+  for (const g of el.leanRot) g.setAttribute('transform', `rotate(${tilt} ${g.dataset.px} ${g.dataset.py})`);
   for (const node of el.engine) {
     node.dataset.state = engine ?? '';
     node.title = engine === 'No data' ? 'No engine frames: ignition off, or the reader lost power (the bike\'s USB socket switches off while cranking)' : '';

@@ -639,3 +639,7 @@ dialog form { display: grid; gap: .9rem; }
 .lean-view .lean-tip { fill: var(--accent); }
 .lean-view .lean-side { fill: var(--ink-soft); font: 600 14px 'Saira Condensed', sans-serif; letter-spacing: .12em; }
 .lean-readout { font: 800 2.2rem/1 'Saira Condensed', sans-serif; text-align: center; margin: .2rem 0 0; }
+
+/* Small lean indicator on the ride screens. */
+.screen-svg .lean-mini { color: var(--ink); }
+.screen-svg .lean-mini .lean-ground { stroke: var(--ink-faint); stroke-width: 3; stroke-linecap: round; }
