@@ -1011,8 +1011,22 @@ function showKeys() {
   keysTimer = setTimeout(() => document.body.classList.remove('keys-shown'), KEYS_SHOW_MS);
 }
 
+// 0x12D is the raw ABS tone-wheel pulse count, so each render tick (~45ms) can show a different raw
+// step even at a steady road speed — that reads as "irregular" even though the signal itself is right.
+// Smooth what's displayed, not what's calibrated: wheelRaw() above still reads the instantaneous raw
+// value for the calibration form. Snap straight to 0 so a real stop still reads immediately, matching
+// the sensor's own cutoff below ~3 km/h.
+let speedSmoothed = null;
+function smoothSpeed(tel) {
+  if (tel.speed === undefined) { speedSmoothed = null; return; }
+  const raw = tel.speed;
+  speedSmoothed = raw <= 0.05 || speedSmoothed === null ? raw : speedSmoothed + (raw - speedSmoothed) * 0.3;
+  tel.speed = speedSmoothed;
+}
+
 function render() {
   const tel = telemetry();
+  smoothSpeed(tel);
   renderLamps(tel);
   syncKeys(); // uses the engine state from the previous frame
   if (!paused) {

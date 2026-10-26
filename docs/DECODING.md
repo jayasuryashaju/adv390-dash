@@ -20,7 +20,7 @@ This is how to turn an unknown CAN ID on the 390 Adventure into a named signal. 
 | Ride mode | 0x120 D4: 0, 2, 1 (also 0x541 D2 08/48/28) | From your capture; names assumed Street / Rain / Offroad |
 | Traction control | 0x12A D1: 28 on, 18 off (also 0x450 D4 bit 0x08, 0x12A D4 bit 0x20); Offroad ride mode turns it off | Confirmed on your bike |
 | ABS mode | 0x450 D3: 01 / 02 (also 0x12A D6 02/04, 0x12A D4 bit 0x08) | From your capture; assumed 01 Road, 02 Offroad |
-| Rear wheel speed | 0x12D D1–D2 (D2 seen up to 82 hand-spinning; cuts to 0 when the wheel stops) | From your capture; unit guessed 0.1 km/h, calibrate against the dash |
+| Rear wheel speed | 0x12D D1–D2 (D2 seen up to 82 hand-spinning; cuts to 0 when the wheel stops) | From your capture; unit guessed 0.1 km/h, calibrate against the dash. Dashboard smooths the displayed value (EMA) since the raw signal is a per-pulse count and jitters visibly at render rate — see 2026-10-26 investigation below |
 | Vehicle speed, smoothed | 0x12E D1–D2 ≈ 0.7 × 0x12D, fades out after the wheel stops | From your capture |
 | Front wheel speed, tilt, lean | 0x12B | **Not sent on your bike**; front wheel still to be found |
 | Traction control button | 0x450 D2 bit 0x01 | KTM family: check |
@@ -137,6 +137,34 @@ Each step takes a minute. Watch the **Live** column on Signals.
 | Lean | Lean the bike on the stand | Raw value moves smoothly, sign flips left to right |
 
 If a signal fails, open **Bus**, filter to its ID and do the test again. You will usually see the right byte change nearby, maybe in a different byte or nibble. Add the corrected version as your own signal. If the whole ID is missing, the 390 does not send it on this bus; use Find an ID.
+
+## 2026-10-26: speed investigation (irregular while riding)
+
+The rider reported the speed reading as irregular while moving but correctly stopping at a halt.
+Checked every capture in `captures/` for a real road ride: all of them (`ride-abs-modes.csv`,
+`abs-mode.csv`, `rear-wheel-hand-spin.csv`, etc.) have the engine off and RPM at 0 throughout —
+they are bench/stand tests, not actual riding, so none of them can confirm or rule out the ID
+against true road speed. Only `engine-start-usb-power.csv` has nonzero RPM, and that is cranking
+on the stand with the bike stationary.
+
+Within what the captures do cover (the rear wheel spun by hand on the stand), 0x12D D1-D2 is still
+the best candidate: it reads 0 at rest, rises smoothly with the wheel (small frame-to-frame steps),
+and matches the existing mapping. 0x176 and 0x177 — the other candidates this doc used to point at —
+are not good matches: every byte pair examined there has large erratic single-frame jumps (tens of
+thousands of raw units between consecutive frames), consistent with raw/unfiltered IMU or ABS data,
+not a clean speed channel. 0x12B is never seen on this bike, as already noted above.
+
+The "irregular while moving" symptom most likely comes from the dashboard displaying every raw
+0x12D sample straight through — it is a per-pulse tone-wheel count, so even at a genuinely steady
+road speed, consecutive ~45 ms render ticks land on different raw steps. The dashboard now applies
+light exponential smoothing to the **displayed** speed only (`web/app.js`, `smoothSpeed`); the
+calibration form still reads the instantaneous raw value, and a true stop still snaps to 0
+immediately rather than decaying.
+
+This does not replace a real validation: to confirm the ID and nail the scale, capture a short ride
+with **Every frame** mode alongside a GPS speed reference (a phone speed app, or known distance
+markers), export the CSV, and compare 0x12D against the true speed the way "Method 2" below
+describes. Until then this is the best-supported choice, not a confirmed one.
 
 ## Calibrating wheel speed and lean
 
